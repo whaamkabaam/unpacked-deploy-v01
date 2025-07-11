@@ -4560,7 +4560,7 @@ const BoxfolioDashboard = ({
           /* @__PURE__ */ jsx("div", { className: "flex items-center justify-center", children: /* @__PURE__ */ jsx(
             "img",
             {
-              src: "images/208a85a9-4108-4646-8cb0-aed2a05655ab.png",
+              src: "/images/208a85a9-4108-4646-8cb0-aed2a05655ab.png",
               alt: "Unpacked.gg Logo",
               className: "h-32 object-contain"
             }
@@ -5683,7 +5683,7 @@ const Hub = () => {
       /* @__PURE__ */ jsx("div", { className: "p-6 md:p-8", children: /* @__PURE__ */ jsxs("div", { className: "max-w-7xl mx-auto space-y-12 md:space-y-16", children: [
         /* @__PURE__ */ jsxs("header", { className: "text-center space-y-6", children: [
           /* @__PURE__ */ jsxs("div", { className: `flex items-center justify-center ${isMobile ? "gap-2" : "gap-4"}`, children: [
-            /* @__PURE__ */ jsx("img", { src: "images/208a85a9-4108-4646-8cb0-aed2a05655ab.png", alt: "Unpacked.gg Logo", className: `object-contain ${isMobile ? "h-20" : "h-32"}` }),
+            /* @__PURE__ */ jsx("img", { src: "/images/208a85a9-4108-4646-8cb0-aed2a05655ab.png", alt: "Unpacked.gg Logo", className: `object-contain ${isMobile ? "h-20" : "h-32"}` }),
             /* @__PURE__ */ jsx("div", { className: `${isMobile ? "w-2" : "w-0.5"} bg-black ${isMobile ? "h-12" : "h-16"} shadow-[0_0_4px_rgba(255,255,255,0.8)]` }),
             /* @__PURE__ */ jsx("span", { className: `font-bold text-gray-800 ${isMobile ? "text-xl" : "text-3xl"}`, children: "Hub" })
           ] }),
@@ -6737,7 +6737,9 @@ const BoxDetail = () => {
     /* @__PURE__ */ jsxs(Helmet, { children: [
       /* @__PURE__ */ jsxs("title", { children: [
         boxData.box_name,
-        " - Mystery Box Analysis | Unpacked.gg"
+        " (",
+        providerConfig == null ? void 0 : providerConfig.displayName,
+        ") - Mystery Box Analysis | Unpacked.gg"
       ] }),
       /* @__PURE__ */ jsx(
         "meta",
@@ -6753,14 +6755,14 @@ const BoxDetail = () => {
           content: `${boxData.box_name}, ${providerConfig == null ? void 0 : providerConfig.displayName}, mystery box, drop rates, expected value, ${boxData.category}, unboxing`
         }
       ),
-      /* @__PURE__ */ jsx("meta", { property: "og:title", content: `${boxData.box_name} | ${providerConfig == null ? void 0 : providerConfig.displayName} Mystery Box` }),
-      /* @__PURE__ */ jsx("meta", { property: "og:description", content: `${boxData.expected_value_percent_of_price.toFixed(1)}% EV • $${boxData.box_price} • ${boxData.floor_rate_percent.toFixed(1)}% Floor Rate • Detailed drop rate analysis` }),
+      /* @__PURE__ */ jsx("meta", { property: "og:title", content: `${boxData.box_name} (${providerConfig == null ? void 0 : providerConfig.displayName}) - Mystery Box Analysis | Unpacked.gg` }),
+      /* @__PURE__ */ jsx("meta", { property: "og:description", content: `Analyze ${boxData.box_name} mystery box from ${providerConfig == null ? void 0 : providerConfig.displayName} with ${boxData.expected_value_percent_of_price.toFixed(1)}% expected value. Check drop rates, volatility, and profitability analysis.` }),
       /* @__PURE__ */ jsx("meta", { property: "og:type", content: "product" }),
       /* @__PURE__ */ jsx("meta", { property: "og:image", content: "https://unpacked.gg/hub/images/f14c9719-6782-47d8-aa50-806e5c2431b6.png" }),
       /* @__PURE__ */ jsx("meta", { property: "og:url", content: `https://unpacked.gg/hub/box/${currentBoxSlug}` }),
       /* @__PURE__ */ jsx("meta", { name: "twitter:card", content: "summary_large_image" }),
-      /* @__PURE__ */ jsx("meta", { name: "twitter:title", content: `${boxData.box_name} Mystery Box Analysis` }),
-      /* @__PURE__ */ jsx("meta", { name: "twitter:description", content: `${boxData.expected_value_percent_of_price.toFixed(1)}% EV • $${boxData.box_price} • Comprehensive drop rate analysis` }),
+      /* @__PURE__ */ jsx("meta", { name: "twitter:title", content: `${boxData.box_name} (${providerConfig == null ? void 0 : providerConfig.displayName}) - Mystery Box Analysis | Unpacked.gg` }),
+      /* @__PURE__ */ jsx("meta", { name: "twitter:description", content: `Analyze ${boxData.box_name} mystery box from ${providerConfig == null ? void 0 : providerConfig.displayName} with ${boxData.expected_value_percent_of_price.toFixed(1)}% expected value. Check drop rates, volatility, and profitability analysis.` }),
       /* @__PURE__ */ jsx("meta", { name: "twitter:image", content: "https://unpacked.gg/hub/images/f14c9719-6782-47d8-aa50-806e5c2431b6.png" }),
       /* @__PURE__ */ jsx("link", { rel: "canonical", href: `https://unpacked.gg/hub/box/${currentBoxSlug}` }),
       /* @__PURE__ */ jsx("script", { type: "application/ld+json", children: JSON.stringify({
@@ -6989,8 +6991,10 @@ function render(url, boxData) {
   if (url.includes("/hub/box/") && boxData) {
     const canonicalUrl = `https://unpacked.gg${url}`;
     const imageUrl = "https://unpacked.gg/hub/images/f14c9719-6782-47d8-aa50-806e5c2431b6.png";
-    const title = `${boxData.box_name} - Mystery Box Analysis | Unpacked.gg`;
-    const description = `Analyze ${boxData.box_name} mystery box with ${(_a2 = boxData.expected_value_percent) == null ? void 0 : _a2.toFixed(1)}% expected value. Check drop rates, volatility, and profitability analysis.`;
+    const providerConfig = PROVIDER_CONFIGS[boxData.provider];
+    const providerName = (providerConfig == null ? void 0 : providerConfig.displayName) || boxData.provider;
+    const title = `${boxData.box_name} (${providerName}) - Mystery Box Analysis | Unpacked.gg`;
+    const description = `Analyze ${boxData.box_name} mystery box from ${providerName} with ${(_a2 = boxData.expected_value_percent) == null ? void 0 : _a2.toFixed(1)}% expected value. Check drop rates, volatility, and profitability analysis.`;
     metaTags = `
     <title>${title}</title>
     <meta name="description" content="${description}" />
