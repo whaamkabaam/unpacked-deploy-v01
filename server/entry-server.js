@@ -832,6 +832,72 @@ var Helmet = (_b = class extends Component {
   encodeSpecialCharacters: true,
   prioritizeSeoTags: false
 }), _b);
+const SORT_OPTIONS = [
+  { value: "ev_desc", label: "Expected Value (High to Low)" },
+  { value: "ev_asc", label: "Expected Value (Low to High)" },
+  { value: "price_desc", label: "Price (High to Low)" },
+  { value: "price_asc", label: "Price (Low to High)" },
+  { value: "volatility_desc", label: "Volatility (High to Low)" },
+  { value: "volatility_asc", label: "Volatility (Low to High)" },
+  { value: "floor_desc", label: "Floor Rate (High to Low)" },
+  { value: "floor_asc", label: "Floor Rate (Low to High)" },
+  { value: "name_asc", label: "Name (A to Z)" },
+  { value: "name_desc", label: "Name (Z to A)" }
+];
+const PROVIDER_CONFIGS$1 = {
+  rillabox: {
+    id: "rillabox",
+    tableName: "rillabox_boxes",
+    displayName: "RillaBox",
+    color: "purple",
+    gradient: "from-purple-600 to-purple-700",
+    bgColor: "bg-purple-50",
+    borderColor: "border-purple-200",
+    textColor: "text-purple-700",
+    logo: "images/998b5116-3761-4842-9a89-628f8e71c362.png",
+    logoAspectRatio: "square",
+    logoBackground: "white"
+  },
+  hypedrop: {
+    id: "hypedrop",
+    tableName: "hypedrop_boxes",
+    displayName: "Hypedrop",
+    color: "blue",
+    gradient: "from-blue-600 to-blue-700",
+    bgColor: "bg-blue-50",
+    borderColor: "border-blue-200",
+    textColor: "text-blue-700",
+    logo: "images/df4efff1-2943-40f6-9a23-fc3f872ee338.png",
+    logoAspectRatio: "wide",
+    logoBackground: "transparent"
+  },
+  casesgg: {
+    id: "casesgg",
+    tableName: "casesgg_boxes",
+    displayName: "Cases.GG",
+    color: "green",
+    gradient: "from-green-600 to-green-700",
+    bgColor: "bg-green-50",
+    borderColor: "border-green-200",
+    textColor: "text-green-700",
+    logo: "images/ccc8c7f7-53cc-41ac-8e6d-0fe13f968fd3.png",
+    logoAspectRatio: "wide",
+    logoBackground: "dark"
+  },
+  luxdrop: {
+    id: "luxdrop",
+    tableName: "luxdrop_boxes",
+    displayName: "Luxdrop",
+    color: "amber",
+    gradient: "from-amber-600 to-amber-700",
+    bgColor: "bg-amber-50",
+    borderColor: "border-amber-200",
+    textColor: "text-amber-700",
+    logo: "images/f983540a-2e1c-47e7-bac5-99c00df75346.png",
+    logoAspectRatio: "square",
+    logoBackground: "transparent"
+  }
+};
 const TOAST_LIMIT = 1;
 const TOAST_REMOVE_DELAY = 1e6;
 let count = 0;
@@ -1087,7 +1153,7 @@ TooltipContent.displayName = TooltipPrimitive.Content.displayName;
 const SUPABASE_URL = "https://qsrkzgywbcbfnmailmsp.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFzcmt6Z3l3YmNiZm5tYWlsbXNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM1MzQ5OTcsImV4cCI6MjA1OTExMDk5N30.uqh8KDM_ks2lzo9Go-0ffCh2CFIURhQRb9qD84i6pQ0";
 const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
-const PROVIDER_CONFIGS$1 = {
+const PROVIDER_CONFIGS = {
   rillabox: {
     tableName: "rillabox_boxes",
     displayName: "RillaBox",
@@ -1228,10 +1294,10 @@ const calculateUnifiedSummaryStats = (boxes) => {
 const fetchUnifiedData = async (selectedProviders, limit = 1e3) => {
   console.log("Fetching unified mystery box data...");
   const allBoxes = [];
-  const providersToFetch = (selectedProviders == null ? void 0 : selectedProviders.length) ? selectedProviders.filter((p) => p in PROVIDER_CONFIGS$1) : Object.keys(PROVIDER_CONFIGS$1);
+  const providersToFetch = (selectedProviders == null ? void 0 : selectedProviders.length) ? selectedProviders.filter((p) => p in PROVIDER_CONFIGS) : Object.keys(PROVIDER_CONFIGS);
   const fetchPromises = providersToFetch.map(async (providerKey) => {
     const provider = providerKey;
-    const config = PROVIDER_CONFIGS$1[provider];
+    const config = PROVIDER_CONFIGS[provider];
     console.log(`Fetching ${config.displayName} mystery boxes...`);
     try {
       const { data: boxesResult, error: boxesError } = await supabase.from(config.tableName).select(`
@@ -1593,72 +1659,6 @@ const TagDots = ({
     ] })
   ] }) });
 };
-const SORT_OPTIONS = [
-  { value: "ev_desc", label: "Expected Value (High to Low)" },
-  { value: "ev_asc", label: "Expected Value (Low to High)" },
-  { value: "price_desc", label: "Price (High to Low)" },
-  { value: "price_asc", label: "Price (Low to High)" },
-  { value: "volatility_desc", label: "Volatility (High to Low)" },
-  { value: "volatility_asc", label: "Volatility (Low to High)" },
-  { value: "floor_desc", label: "Floor Rate (High to Low)" },
-  { value: "floor_asc", label: "Floor Rate (Low to High)" },
-  { value: "name_asc", label: "Name (A to Z)" },
-  { value: "name_desc", label: "Name (Z to A)" }
-];
-const PROVIDER_CONFIGS = {
-  rillabox: {
-    id: "rillabox",
-    tableName: "rillabox_boxes",
-    displayName: "RillaBox",
-    color: "purple",
-    gradient: "from-purple-600 to-purple-700",
-    bgColor: "bg-purple-50",
-    borderColor: "border-purple-200",
-    textColor: "text-purple-700",
-    logo: "/images/998b5116-3761-4842-9a89-628f8e71c362.png",
-    logoAspectRatio: "square",
-    logoBackground: "white"
-  },
-  hypedrop: {
-    id: "hypedrop",
-    tableName: "hypedrop_boxes",
-    displayName: "Hypedrop",
-    color: "blue",
-    gradient: "from-blue-600 to-blue-700",
-    bgColor: "bg-blue-50",
-    borderColor: "border-blue-200",
-    textColor: "text-blue-700",
-    logo: "/images/df4efff1-2943-40f6-9a23-fc3f872ee338.png",
-    logoAspectRatio: "wide",
-    logoBackground: "transparent"
-  },
-  casesgg: {
-    id: "casesgg",
-    tableName: "casesgg_boxes",
-    displayName: "Cases.GG",
-    color: "green",
-    gradient: "from-green-600 to-green-700",
-    bgColor: "bg-green-50",
-    borderColor: "border-green-200",
-    textColor: "text-green-700",
-    logo: "/images/ccc8c7f7-53cc-41ac-8e6d-0fe13f968fd3.png",
-    logoAspectRatio: "wide",
-    logoBackground: "dark"
-  },
-  luxdrop: {
-    id: "luxdrop",
-    tableName: "luxdrop_boxes",
-    displayName: "Luxdrop",
-    color: "amber",
-    gradient: "from-amber-600 to-amber-700",
-    bgColor: "bg-amber-50",
-    borderColor: "border-amber-200",
-    textColor: "text-amber-700",
-    logo: "/images/f983540a-2e1c-47e7-bac5-99c00df75346.png",
-    logoAspectRatio: "square",
-    logoBackground: "transparent"
-  }
-};
 const ProviderLogo = ({
   providerId,
   size = "md",
@@ -1668,7 +1668,7 @@ const ProviderLogo = ({
 }) => {
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
-  const config = PROVIDER_CONFIGS[providerId];
+  const config = PROVIDER_CONFIGS$1[providerId];
   if (!config) {
     console.warn(`Provider config not found for: ${providerId}`);
     return null;
@@ -1883,7 +1883,7 @@ const BoxCard = React__default.memo(({ box, index, isVisible }) => {
                     className: "hover:scale-[1.02] transition-transform duration-200"
                   }
                 ) }) }),
-                /* @__PURE__ */ jsx(TooltipContent, { children: /* @__PURE__ */ jsx("p", { children: ((_a2 = PROVIDER_CONFIGS[provider]) == null ? void 0 : _a2.displayName) || provider }) })
+                /* @__PURE__ */ jsx(TooltipContent, { children: /* @__PURE__ */ jsx("p", { children: ((_a2 = PROVIDER_CONFIGS$1[provider]) == null ? void 0 : _a2.displayName) || provider }) })
               ] }) }),
               /* @__PURE__ */ jsxs(
                 "div",
@@ -1918,7 +1918,7 @@ const BoxCard = React__default.memo(({ box, index, isVisible }) => {
             /* @__PURE__ */ jsxs(CardContent, { className: "space-y-3", children: [
               /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-3 gap-2 items-center", children: [
                 /* @__PURE__ */ jsx("div", { className: "text-left", children: /* @__PURE__ */ jsx("span", { className: "text-xl font-bold text-gray-800", children: formatBoxPrice(box.box_price) }) }),
-                /* @__PURE__ */ jsx("div", { className: "flex justify-center", children: /* @__PURE__ */ jsx("span", { className: `text-xs px-2 py-1 rounded-full font-medium text-center ${(_b2 = PROVIDER_CONFIGS[provider]) == null ? void 0 : _b2.bgColor} ${(_c = PROVIDER_CONFIGS[provider]) == null ? void 0 : _c.textColor}`, children: (_d = PROVIDER_CONFIGS[provider]) == null ? void 0 : _d.displayName }) }),
+                /* @__PURE__ */ jsx("div", { className: "flex justify-center", children: /* @__PURE__ */ jsx("span", { className: `text-xs px-2 py-1 rounded-full font-medium text-center ${(_b2 = PROVIDER_CONFIGS$1[provider]) == null ? void 0 : _b2.bgColor} ${(_c = PROVIDER_CONFIGS$1[provider]) == null ? void 0 : _c.textColor}`, children: (_d = PROVIDER_CONFIGS$1[provider]) == null ? void 0 : _d.displayName }) }),
                 /* @__PURE__ */ jsx("div", { className: "flex justify-end", children: /* @__PURE__ */ jsxs(Badge, { variant: "outline", className: `border-current font-bold text-sm ${volatilityColor}`, children: [
                   volatilityPercent.toFixed(1),
                   "%"
@@ -3096,10 +3096,10 @@ const ProviderFilter = ({
     }
   };
   const handleSelectAll = () => {
-    const allProviders2 = Object.keys(PROVIDER_CONFIGS);
+    const allProviders2 = Object.keys(PROVIDER_CONFIGS$1);
     onProviderChange(selectedProviders.length === allProviders2.length ? [] : allProviders2);
   };
-  const allProviders = Object.keys(PROVIDER_CONFIGS);
+  const allProviders = Object.keys(PROVIDER_CONFIGS$1);
   const isAllSelected = selectedProviders.length === allProviders.length;
   const isPartialSelection = selectedProviders.length > 0 && selectedProviders.length < allProviders.length;
   return /* @__PURE__ */ jsxs("div", { className: "space-y-4", children: [
@@ -3114,7 +3114,7 @@ const ProviderFilter = ({
         }
       )
     ] }),
-    /* @__PURE__ */ jsx("div", { className: "space-y-4", children: Object.entries(PROVIDER_CONFIGS).map(([providerId, config]) => {
+    /* @__PURE__ */ jsx("div", { className: "space-y-4", children: Object.entries(PROVIDER_CONFIGS$1).map(([providerId, config]) => {
       const isSelected = selectedProviders.includes(providerId);
       const count2 = providerCounts[providerId] || 0;
       return /* @__PURE__ */ jsxs("div", { className: "flex items-center space-x-4 p-3 rounded-lg hover:bg-gray-50 transition-colors", children: [
@@ -3542,7 +3542,7 @@ const MobileFilterChips = ({
 }) => {
   const chips = [];
   filters.providers.forEach((providerId) => {
-    const config = PROVIDER_CONFIGS[providerId];
+    const config = PROVIDER_CONFIGS$1[providerId];
     if (config) {
       chips.push({
         type: "providers",
@@ -3824,7 +3824,7 @@ const FilterControls = ({
           ] }),
           /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
             /* @__PURE__ */ jsx("span", { className: "text-xs font-medium text-gray-600", children: "Providers" }),
-            /* @__PURE__ */ jsx("div", { className: "flex flex-wrap gap-2", children: Object.entries(PROVIDER_CONFIGS).map(([providerId, config]) => {
+            /* @__PURE__ */ jsx("div", { className: "flex flex-wrap gap-2", children: Object.entries(PROVIDER_CONFIGS$1).map(([providerId, config]) => {
               const isSelected = filters.providers.includes(providerId);
               const count2 = providerCounts[providerId] || 0;
               return /* @__PURE__ */ jsxs(
@@ -4560,7 +4560,7 @@ const BoxfolioDashboard = ({
           /* @__PURE__ */ jsx("div", { className: "flex items-center justify-center", children: /* @__PURE__ */ jsx(
             "img",
             {
-              src: "/images/208a85a9-4108-4646-8cb0-aed2a05655ab.png",
+              src: "images/208a85a9-4108-4646-8cb0-aed2a05655ab.png",
               alt: "Unpacked.gg Logo",
               className: "h-32 object-contain"
             }
@@ -5683,7 +5683,7 @@ const Hub = () => {
       /* @__PURE__ */ jsx("div", { className: "p-6 md:p-8", children: /* @__PURE__ */ jsxs("div", { className: "max-w-7xl mx-auto space-y-12 md:space-y-16", children: [
         /* @__PURE__ */ jsxs("header", { className: "text-center space-y-6", children: [
           /* @__PURE__ */ jsxs("div", { className: `flex items-center justify-center ${isMobile ? "gap-2" : "gap-4"}`, children: [
-            /* @__PURE__ */ jsx("img", { src: "/images/208a85a9-4108-4646-8cb0-aed2a05655ab.png", alt: "Unpacked.gg Logo", className: `object-contain ${isMobile ? "h-20" : "h-32"}` }),
+            /* @__PURE__ */ jsx("img", { src: "images/208a85a9-4108-4646-8cb0-aed2a05655ab.png", alt: "Unpacked.gg Logo", className: `object-contain ${isMobile ? "h-20" : "h-32"}` }),
             /* @__PURE__ */ jsx("div", { className: `${isMobile ? "w-2" : "w-0.5"} bg-black ${isMobile ? "h-12" : "h-16"} shadow-[0_0_4px_rgba(255,255,255,0.8)]` }),
             /* @__PURE__ */ jsx("span", { className: `font-bold text-gray-800 ${isMobile ? "text-xl" : "text-3xl"}`, children: "Hub" })
           ] }),
@@ -5900,7 +5900,7 @@ const fetchBoxDetail = async (boxSlug) => {
   console.log(`Enhanced search for box with slug: ${boxSlug} across all providers...`);
   const normalizedSlug = normalizeString(boxSlug);
   console.log(`Normalized search slug: ${normalizedSlug}`);
-  const searchPromises = Object.entries(PROVIDER_CONFIGS).map(async ([providerId, config]) => {
+  const searchPromises = Object.entries(PROVIDER_CONFIGS$1).map(async ([providerId, config]) => {
     try {
       const { data, error } = await supabase.from(config.tableName).select("*").limit(1e3);
       if (error) {
@@ -5998,7 +5998,7 @@ const useBoxSuggestions = () => {
     setLoading(true);
     console.log(`Finding suggestions for: ${searchSlug}`);
     try {
-      const searchPromises = Object.entries(PROVIDER_CONFIGS).map(async ([providerId, config]) => {
+      const searchPromises = Object.entries(PROVIDER_CONFIGS$1).map(async ([providerId, config]) => {
         try {
           const { data, error } = await supabase.from(config.tableName).select("box_name").limit(200);
           if (error || !data) {
@@ -6317,7 +6317,7 @@ const BoxDetailContent = ({ box }) => {
                 className: "transition-transform duration-200 hover:scale-[1.4] group-hover:scale-[1.2]"
               }
             ),
-            /* @__PURE__ */ jsx("span", { className: `${isMobile ? "text-lg" : "text-xl"} font-bold text-purple-600 group-hover:text-purple-800 transition-colors duration-200`, children: ((_a2 = PROVIDER_CONFIGS[box.provider || "rillabox"]) == null ? void 0 : _a2.displayName) || "RillaBox" }),
+            /* @__PURE__ */ jsx("span", { className: `${isMobile ? "text-lg" : "text-xl"} font-bold text-purple-600 group-hover:text-purple-800 transition-colors duration-200`, children: ((_a2 = PROVIDER_CONFIGS$1[box.provider || "rillabox"]) == null ? void 0 : _a2.displayName) || "RillaBox" }),
             /* @__PURE__ */ jsx(ExternalLink, { className: `${isMobile ? "h-4 w-4" : "h-5 w-5"} transform rotate-45 text-purple-600 group-hover:text-purple-800 group-hover:scale-110 transition-all duration-200` })
           ]
         }
@@ -6593,7 +6593,7 @@ const ProviderBreadcrumb = ({
   boxName,
   className = ""
 }) => {
-  providerId ? PROVIDER_CONFIGS[providerId] : null;
+  providerId ? PROVIDER_CONFIGS$1[providerId] : null;
   const isMobile = useIsMobile();
   if (isMobile) {
     return /* @__PURE__ */ jsxs("div", { className: `flex items-center gap-2 overflow-x-auto py-3 px-1 ${className}`, children: [
@@ -6731,15 +6731,13 @@ const BoxDetail = () => {
       ] }) })
     ] });
   }
-  const providerConfig = PROVIDER_CONFIGS[boxData.provider];
+  const providerConfig = PROVIDER_CONFIGS$1[boxData.provider];
   const currentBoxSlug = generateSlug(boxData.box_name);
   return /* @__PURE__ */ jsxs(Fragment, { children: [
     /* @__PURE__ */ jsxs(Helmet, { children: [
       /* @__PURE__ */ jsxs("title", { children: [
         boxData.box_name,
-        " (",
-        providerConfig == null ? void 0 : providerConfig.displayName,
-        ") - Mystery Box Analysis | Unpacked.gg"
+        " - Mystery Box Analysis | Unpacked.gg"
       ] }),
       /* @__PURE__ */ jsx(
         "meta",
@@ -6755,14 +6753,14 @@ const BoxDetail = () => {
           content: `${boxData.box_name}, ${providerConfig == null ? void 0 : providerConfig.displayName}, mystery box, drop rates, expected value, ${boxData.category}, unboxing`
         }
       ),
-      /* @__PURE__ */ jsx("meta", { property: "og:title", content: `${boxData.box_name} (${providerConfig == null ? void 0 : providerConfig.displayName}) - Mystery Box Analysis | Unpacked.gg` }),
-      /* @__PURE__ */ jsx("meta", { property: "og:description", content: `Analyze ${boxData.box_name} mystery box from ${providerConfig == null ? void 0 : providerConfig.displayName} with ${boxData.expected_value_percent_of_price.toFixed(1)}% expected value. Check drop rates, volatility, and profitability analysis.` }),
+      /* @__PURE__ */ jsx("meta", { property: "og:title", content: `${boxData.box_name} | ${providerConfig == null ? void 0 : providerConfig.displayName} Mystery Box` }),
+      /* @__PURE__ */ jsx("meta", { property: "og:description", content: `${boxData.expected_value_percent_of_price.toFixed(1)}% EV • $${boxData.box_price} • ${boxData.floor_rate_percent.toFixed(1)}% Floor Rate • Detailed drop rate analysis` }),
       /* @__PURE__ */ jsx("meta", { property: "og:type", content: "product" }),
       /* @__PURE__ */ jsx("meta", { property: "og:image", content: "https://unpacked.gg/hub/images/f14c9719-6782-47d8-aa50-806e5c2431b6.png" }),
       /* @__PURE__ */ jsx("meta", { property: "og:url", content: `https://unpacked.gg/hub/box/${currentBoxSlug}` }),
       /* @__PURE__ */ jsx("meta", { name: "twitter:card", content: "summary_large_image" }),
-      /* @__PURE__ */ jsx("meta", { name: "twitter:title", content: `${boxData.box_name} (${providerConfig == null ? void 0 : providerConfig.displayName}) - Mystery Box Analysis | Unpacked.gg` }),
-      /* @__PURE__ */ jsx("meta", { name: "twitter:description", content: `Analyze ${boxData.box_name} mystery box from ${providerConfig == null ? void 0 : providerConfig.displayName} with ${boxData.expected_value_percent_of_price.toFixed(1)}% expected value. Check drop rates, volatility, and profitability analysis.` }),
+      /* @__PURE__ */ jsx("meta", { name: "twitter:title", content: `${boxData.box_name} Mystery Box Analysis` }),
+      /* @__PURE__ */ jsx("meta", { name: "twitter:description", content: `${boxData.expected_value_percent_of_price.toFixed(1)}% EV • $${boxData.box_price} • Comprehensive drop rate analysis` }),
       /* @__PURE__ */ jsx("meta", { name: "twitter:image", content: "https://unpacked.gg/hub/images/f14c9719-6782-47d8-aa50-806e5c2431b6.png" }),
       /* @__PURE__ */ jsx("link", { rel: "canonical", href: `https://unpacked.gg/hub/box/${currentBoxSlug}` }),
       /* @__PURE__ */ jsx("script", { type: "application/ld+json", children: JSON.stringify({
@@ -6848,10 +6846,10 @@ const BoxDetail = () => {
 const ProviderHub = () => {
   var _a2;
   const { provider } = useParams();
-  if (!provider || !(provider in PROVIDER_CONFIGS)) {
+  if (!provider || !(provider in PROVIDER_CONFIGS$1)) {
     return /* @__PURE__ */ jsx(Navigate, { to: "/hub", replace: true });
   }
-  const config = PROVIDER_CONFIGS[provider];
+  const config = PROVIDER_CONFIGS$1[provider];
   const { boxesData, loading } = useUnifiedBoxData([provider]);
   const itemsPerPage = 20;
   const [currentPage, setCurrentPage] = useState(1);
@@ -6981,7 +6979,7 @@ const App = () => /* @__PURE__ */ jsx(QueryClientProvider, { client: queryClient
   ] })
 ] }) }) });
 function render(url, boxData) {
-  var _a2;
+  var _a2, _b2;
   const helmetContext = {};
   const html = ReactDOMServer.renderToString(
     /* @__PURE__ */ jsx(HelmetProvider, { context: helmetContext, children: /* @__PURE__ */ jsx(MemoryRouter, { initialEntries: [url], children: /* @__PURE__ */ jsx(App, {}) }) })
@@ -6991,10 +6989,9 @@ function render(url, boxData) {
   if (url.includes("/hub/box/") && boxData) {
     const canonicalUrl = `https://unpacked.gg${url}`;
     const imageUrl = "https://unpacked.gg/hub/images/f14c9719-6782-47d8-aa50-806e5c2431b6.png";
-    const providerConfig = PROVIDER_CONFIGS[boxData.provider];
-    const providerName = (providerConfig == null ? void 0 : providerConfig.displayName) || boxData.provider;
-    const title = `${boxData.box_name} (${providerName}) - Mystery Box Analysis | Unpacked.gg`;
-    const description = `Analyze ${boxData.box_name} mystery box from ${providerName} with ${(_a2 = boxData.expected_value_percent) == null ? void 0 : _a2.toFixed(1)}% expected value. Check drop rates, volatility, and profitability analysis.`;
+    const providerDisplay = ((_a2 = PROVIDER_CONFIGS$1[boxData.provider]) == null ? void 0 : _a2.displayName) || boxData.provider;
+    const title = `${boxData.box_name} (${providerDisplay}) | Unpacked.gg`;
+    const description = `${((_b2 = boxData.expected_value_percent) == null ? void 0 : _b2.toFixed(1)) || "?"}% EV • ${providerDisplay} mystery box analysis with detailed drop rates & profitability.`;
     metaTags = `
     <title>${title}</title>
     <meta name="description" content="${description}" />
