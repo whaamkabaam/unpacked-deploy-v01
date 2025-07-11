@@ -4,7 +4,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
 var _a, _b;
 import { jsx, jsxs, Fragment } from "react/jsx-runtime";
 import ReactDOMServer from "react-dom/server";
-import { useNavigate, useSearchParams, Link, useLocation, useParams, Navigate, Routes, Route, MemoryRouter } from "react-router-dom";
+import { useNavigate, useSearchParams, Link, useParams, Navigate, useLocation, Routes, Route, MemoryRouter } from "react-router-dom";
 import * as React from "react";
 import React__default, { Component, useState, useCallback, useEffect, useMemo, useRef } from "react";
 import fastCompare from "react-fast-compare";
@@ -6632,106 +6632,6 @@ const ProviderBreadcrumb = ({
     ] })
   ] });
 };
-const SEODebugInfo = ({ boxData }) => {
-  var _a2, _b2;
-  const location = useLocation();
-  const [showDebug, setShowDebug] = useState(false);
-  if (!showDebug) {
-    return /* @__PURE__ */ jsx("div", { className: "fixed bottom-4 right-4 z-50", children: /* @__PURE__ */ jsx(
-      Button,
-      {
-        variant: "outline",
-        size: "sm",
-        onClick: () => setShowDebug(true),
-        className: "bg-background/80 backdrop-blur-sm",
-        children: "SEO Debug"
-      }
-    ) });
-  }
-  const canonicalUrl = `https://unpacked.gg${location.pathname}`;
-  const imageUrl = (boxData == null ? void 0 : boxData.box_image) || "https://unpacked.gg/lovable-uploads/f14c9719-6782-47d8-aa50-806e5c2431b6.png";
-  const title = boxData ? `${boxData.box_name} - Mystery Box Analysis | Unpacked.gg` : "Unpacked.gg - Online Mystery Boxes - Find Yours";
-  const description = boxData ? `Analyze ${boxData.box_name} mystery box with ${(_a2 = boxData.expected_value_percent) == null ? void 0 : _a2.toFixed(1)}% expected value. Check drop rates, volatility, and profitability analysis.` : "Unbox the Best Mystery Boxes – Don't Settle for Poor Drop Rates. Analyze expected values, drop rates, and volatility across multiple providers.";
-  const socialUrls = {
-    facebook: `https://developers.facebook.com/tools/debug/sharing/?q=${encodeURIComponent(canonicalUrl)}`,
-    twitter: `https://cards-dev.twitter.com/validator?url=${encodeURIComponent(canonicalUrl)}`,
-    linkedin: `https://www.linkedin.com/post-inspector/inspect/${encodeURIComponent(canonicalUrl)}`,
-    whatsapp: `https://wa.me/?text=${encodeURIComponent(canonicalUrl)}`
-  };
-  return /* @__PURE__ */ jsx("div", { className: "fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4", children: /* @__PURE__ */ jsxs(Card, { className: "max-w-2xl max-h-[90vh] overflow-auto w-full", children: [
-    /* @__PURE__ */ jsxs(CardHeader, { className: "flex flex-row items-center justify-between", children: [
-      /* @__PURE__ */ jsx(CardTitle, { children: "SEO Debug Information" }),
-      /* @__PURE__ */ jsx(Button, { variant: "ghost", size: "sm", onClick: () => setShowDebug(false), children: "✕" })
-    ] }),
-    /* @__PURE__ */ jsxs(CardContent, { className: "space-y-4", children: [
-      /* @__PURE__ */ jsxs("div", { children: [
-        /* @__PURE__ */ jsx("h3", { className: "font-semibold mb-2", children: "Meta Tags" }),
-        /* @__PURE__ */ jsxs("div", { className: "space-y-2 text-sm font-mono bg-muted p-3 rounded", children: [
-          /* @__PURE__ */ jsxs("div", { children: [
-            /* @__PURE__ */ jsx("strong", { children: "Title:" }),
-            " ",
-            title
-          ] }),
-          /* @__PURE__ */ jsxs("div", { children: [
-            /* @__PURE__ */ jsx("strong", { children: "Description:" }),
-            " ",
-            description
-          ] }),
-          /* @__PURE__ */ jsxs("div", { children: [
-            /* @__PURE__ */ jsx("strong", { children: "Image:" }),
-            " ",
-            imageUrl
-          ] }),
-          /* @__PURE__ */ jsxs("div", { children: [
-            /* @__PURE__ */ jsx("strong", { children: "URL:" }),
-            " ",
-            canonicalUrl
-          ] })
-        ] })
-      ] }),
-      /* @__PURE__ */ jsxs("div", { children: [
-        /* @__PURE__ */ jsx("h3", { className: "font-semibold mb-2", children: "Preview Test Tools" }),
-        /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 gap-2", children: Object.entries(socialUrls).map(([platform, url]) => /* @__PURE__ */ jsxs(
-          Button,
-          {
-            variant: "outline",
-            size: "sm",
-            onClick: () => window.open(url, "_blank"),
-            className: "capitalize",
-            children: [
-              "Test ",
-              platform
-            ]
-          },
-          platform
-        )) })
-      ] }),
-      boxData && /* @__PURE__ */ jsxs("div", { children: [
-        /* @__PURE__ */ jsx("h3", { className: "font-semibold mb-2", children: "Box Data" }),
-        /* @__PURE__ */ jsxs("div", { className: "text-sm bg-muted p-3 rounded", children: [
-          /* @__PURE__ */ jsxs("div", { children: [
-            "Name: ",
-            boxData.box_name
-          ] }),
-          /* @__PURE__ */ jsxs("div", { children: [
-            "EV: ",
-            (_b2 = boxData.expected_value_percent) == null ? void 0 : _b2.toFixed(1),
-            "%"
-          ] }),
-          /* @__PURE__ */ jsxs("div", { children: [
-            "Price: $",
-            boxData.box_price
-          ] }),
-          /* @__PURE__ */ jsxs("div", { children: [
-            "Provider: ",
-            boxData.data_source
-          ] })
-        ] })
-      ] }),
-      /* @__PURE__ */ jsx("div", { className: "text-xs text-muted-foreground", children: "Note: Social media platforms may cache preview data. Use the test tools above to refresh cache." })
-    ] })
-  ] }) });
-};
 const BoxDetailSkeleton = () => /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-4 py-6 max-w-7xl", children: [
   /* @__PURE__ */ jsxs("div", { className: "mb-6 flex items-center gap-4", children: [
     /* @__PURE__ */ jsx(Skeleton, { className: "h-10 w-32" }),
@@ -6856,12 +6756,12 @@ const BoxDetail = () => {
       /* @__PURE__ */ jsx("meta", { property: "og:title", content: `${boxData.box_name} | ${providerConfig == null ? void 0 : providerConfig.displayName} Mystery Box` }),
       /* @__PURE__ */ jsx("meta", { property: "og:description", content: `${boxData.expected_value_percent_of_price.toFixed(1)}% EV • $${boxData.box_price} • ${boxData.floor_rate_percent.toFixed(1)}% Floor Rate • Detailed drop rate analysis` }),
       /* @__PURE__ */ jsx("meta", { property: "og:type", content: "product" }),
-      /* @__PURE__ */ jsx("meta", { property: "og:image", content: boxData.box_image }),
+      /* @__PURE__ */ jsx("meta", { property: "og:image", content: "https://unpacked.gg/hub/images/f14c9719-6782-47d8-aa50-806e5c2431b6.png" }),
       /* @__PURE__ */ jsx("meta", { property: "og:url", content: `https://unpacked.gg/hub/box/${currentBoxSlug}` }),
       /* @__PURE__ */ jsx("meta", { name: "twitter:card", content: "summary_large_image" }),
       /* @__PURE__ */ jsx("meta", { name: "twitter:title", content: `${boxData.box_name} Mystery Box Analysis` }),
       /* @__PURE__ */ jsx("meta", { name: "twitter:description", content: `${boxData.expected_value_percent_of_price.toFixed(1)}% EV • $${boxData.box_price} • Comprehensive drop rate analysis` }),
-      /* @__PURE__ */ jsx("meta", { name: "twitter:image", content: boxData.box_image }),
+      /* @__PURE__ */ jsx("meta", { name: "twitter:image", content: "https://unpacked.gg/hub/images/f14c9719-6782-47d8-aa50-806e5c2431b6.png" }),
       /* @__PURE__ */ jsx("link", { rel: "canonical", href: `https://unpacked.gg/hub/box/${currentBoxSlug}` }),
       /* @__PURE__ */ jsx("script", { type: "application/ld+json", children: JSON.stringify({
         "@context": "https://schema.org/",
@@ -6939,8 +6839,7 @@ const BoxDetail = () => {
           }
         )
       ] }),
-      /* @__PURE__ */ jsx(BoxDetailContent, { box: boxData }),
-      /* @__PURE__ */ jsx(SEODebugInfo, { boxData })
+      /* @__PURE__ */ jsx(BoxDetailContent, { box: boxData })
     ] }) })
   ] });
 };
