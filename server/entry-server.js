@@ -6988,7 +6988,7 @@ function render(url, boxData) {
   let metaTags = "";
   if (url.includes("/hub/box/") && boxData) {
     const canonicalUrl = `https://unpacked.gg${url}`;
-    const imageUrl = boxData.box_image || "https://unpacked.gg/lovable-uploads/f14c9719-6782-47d8-aa50-806e5c2431b6.png";
+    const imageUrl = "https://unpacked.gg/hub/images/f14c9719-6782-47d8-aa50-806e5c2431b6.png";
     const title = `${boxData.box_name} - Mystery Box Analysis | Unpacked.gg`;
     const description = `Analyze ${boxData.box_name} mystery box with ${(_a2 = boxData.expected_value_percent) == null ? void 0 : _a2.toFixed(1)}% expected value. Check drop rates, volatility, and profitability analysis.`;
     metaTags = `
