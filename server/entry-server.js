@@ -9,7 +9,7 @@ import * as React from "react";
 import React__default, { Component, useState, useCallback, useEffect, useMemo, useRef } from "react";
 import * as ToastPrimitives from "@radix-ui/react-toast";
 import { cva } from "class-variance-authority";
-import { X, ChevronLeft, ChevronRight, Check, Circle, ArrowUpDown, ChevronDown, Search, RotateCcw, Filter, FilterX, BarChart3, Info, Target, DollarSign, Zap, Award, Medal, Trophy, Package, List, HelpCircle, Star, AlertTriangle, Home, ArrowLeft } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, Check, Circle, ArrowUpDown, ChevronDown, Search, RotateCcw, Filter, FilterX, BarChart3, Info, Target, DollarSign, Zap, Award, Medal, Trophy, Package, List, ExternalLink, HelpCircle, Star, AlertTriangle, Home, ArrowLeft } from "lucide-react";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { useTheme } from "next-themes";
@@ -1615,7 +1615,7 @@ const PROVIDER_CONFIGS = {
     bgColor: "bg-purple-50",
     borderColor: "border-purple-200",
     textColor: "text-purple-700",
-    logo: "images/998b5116-3761-4842-9a89-628f8e71c362.png",
+    logo: "/images/998b5116-3761-4842-9a89-628f8e71c362.png",
     logoAspectRatio: "square",
     logoBackground: "white"
   },
@@ -1628,7 +1628,7 @@ const PROVIDER_CONFIGS = {
     bgColor: "bg-blue-50",
     borderColor: "border-blue-200",
     textColor: "text-blue-700",
-    logo: "images/df4efff1-2943-40f6-9a23-fc3f872ee338.png",
+    logo: "/images/df4efff1-2943-40f6-9a23-fc3f872ee338.png",
     logoAspectRatio: "wide",
     logoBackground: "transparent"
   },
@@ -1641,7 +1641,7 @@ const PROVIDER_CONFIGS = {
     bgColor: "bg-green-50",
     borderColor: "border-green-200",
     textColor: "text-green-700",
-    logo: "images/ccc8c7f7-53cc-41ac-8e6d-0fe13f968fd3.png",
+    logo: "/images/ccc8c7f7-53cc-41ac-8e6d-0fe13f968fd3.png",
     logoAspectRatio: "wide",
     logoBackground: "dark"
   },
@@ -1654,7 +1654,7 @@ const PROVIDER_CONFIGS = {
     bgColor: "bg-amber-50",
     borderColor: "border-amber-200",
     textColor: "text-amber-700",
-    logo: "images/f983540a-2e1c-47e7-bac5-99c00df75346.png",
+    logo: "/images/f983540a-2e1c-47e7-bac5-99c00df75346.png",
     logoAspectRatio: "square",
     logoBackground: "transparent"
   }
@@ -1890,7 +1890,7 @@ const BoxCard = React__default.memo(({ box, index, isVisible }) => {
                 {
                   className: "w-full h-40 rounded-lg mb-2 overflow-hidden p-2 border border-purple-200 backdrop-blur-sm relative",
                   style: {
-                    backgroundImage: `url('images/90a8beae-8a8c-4f9a-bfd2-d7dc5be9de82.png')`,
+                    backgroundImage: `url('/images/90a8beae-8a8c-4f9a-bfd2-d7dc5be9de82.png')`,
                     backgroundSize: "cover",
                     backgroundRepeat: "no-repeat",
                     backgroundPosition: "center",
@@ -2296,6 +2296,50 @@ const SortDropdown = ({ value, onChange }) => {
     )
   ] });
 };
+const ScrollableContainer = ({
+  children,
+  className,
+  maxHeight = "max-h-60",
+  showIndicators = true
+}) => {
+  const [showTopGradient, setShowTopGradient] = useState(false);
+  const [showBottomGradient, setShowBottomGradient] = useState(false);
+  const scrollRef = useRef(null);
+  const checkScrollPosition = () => {
+    if (!scrollRef.current) return;
+    const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
+    setShowTopGradient(scrollTop > 10);
+    setShowBottomGradient(scrollTop < scrollHeight - clientHeight - 10);
+  };
+  useEffect(() => {
+    const scrollElement = scrollRef.current;
+    if (!scrollElement) return;
+    checkScrollPosition();
+    scrollElement.addEventListener("scroll", checkScrollPosition);
+    const resizeObserver = new ResizeObserver(checkScrollPosition);
+    resizeObserver.observe(scrollElement);
+    return () => {
+      scrollElement.removeEventListener("scroll", checkScrollPosition);
+      resizeObserver.disconnect();
+    };
+  }, []);
+  return /* @__PURE__ */ jsxs("div", { className: "relative", children: [
+    showIndicators && showTopGradient && /* @__PURE__ */ jsx("div", { className: "scroll-indicator-top opacity-100" }),
+    /* @__PURE__ */ jsx(
+      "div",
+      {
+        ref: scrollRef,
+        className: cn(
+          "overflow-y-auto scrollbar-webkit scroll-shadow-inset",
+          maxHeight,
+          className
+        ),
+        children
+      }
+    ),
+    showIndicators && showBottomGradient && /* @__PURE__ */ jsx("div", { className: "scroll-indicator-bottom opacity-100" })
+  ] });
+};
 const Sheet = SheetPrimitive.Root;
 const SheetTrigger = SheetPrimitive.Trigger;
 const SheetPortal = SheetPrimitive.Portal;
@@ -2524,7 +2568,7 @@ const CategoryFilter = ({
           }
         )
       ] }),
-      /* @__PURE__ */ jsx("div", { className: "grid grid-cols-1 gap-2 max-h-40 overflow-y-auto", children: availableCategories.map((category) => /* @__PURE__ */ jsxs(
+      /* @__PURE__ */ jsx(ScrollableContainer, { maxHeight: "max-h-40", className: "grid grid-cols-1 gap-2", showIndicators: true, children: availableCategories.map((category) => /* @__PURE__ */ jsxs(
         "label",
         {
           className: "flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded",
@@ -2555,6 +2599,7 @@ const Slider = React.forwardRef(({ className, ...props }, ref) => /* @__PURE__ *
     ...props,
     children: [
       /* @__PURE__ */ jsx(SliderPrimitive.Track, { className: "relative h-2 w-full grow overflow-hidden rounded-full bg-secondary", children: /* @__PURE__ */ jsx(SliderPrimitive.Range, { className: "absolute h-full bg-primary" }) }),
+      /* @__PURE__ */ jsx(SliderPrimitive.Thumb, { className: "block h-5 w-5 rounded-full border-2 border-primary bg-background ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50" }),
       /* @__PURE__ */ jsx(SliderPrimitive.Thumb, { className: "block h-5 w-5 rounded-full border-2 border-primary bg-background ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50" })
     ]
   }
@@ -2925,7 +2970,7 @@ const TagsFilter = ({
       ] }),
       /* @__PURE__ */ jsxs("div", { children: [
         /* @__PURE__ */ jsx("h4", { className: "text-sm font-medium text-gray-700 mb-2", children: searchTerm ? "Search Results" : "All Tags" }),
-        /* @__PURE__ */ jsx("div", { className: "grid grid-cols-1 gap-1 max-h-40 overflow-y-auto", children: filteredTags.map((tag) => /* @__PURE__ */ jsxs(
+        /* @__PURE__ */ jsx(ScrollableContainer, { maxHeight: "max-h-40", className: "grid grid-cols-1 gap-1", showIndicators: true, children: filteredTags.map((tag) => /* @__PURE__ */ jsxs(
           "label",
           {
             className: "flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded",
@@ -2955,14 +3000,11 @@ const AdvancedFilters = ({
   maxItemCount
 }) => {
   const [isOpen, setIsOpen] = React__default.useState(false);
-  const isActive = jackpotValueRange.min !== 0 || jackpotValueRange.max !== maxJackpotValue || itemCountRange.min !== 0 || itemCountRange.max !== maxItemCount;
+  jackpotValueRange.min !== 0 || jackpotValueRange.max !== maxJackpotValue || itemCountRange.min !== 0 || itemCountRange.max !== maxItemCount;
   return /* @__PURE__ */ jsxs(Collapsible, { open: isOpen, onOpenChange: setIsOpen, children: [
     /* @__PURE__ */ jsxs(CollapsibleTrigger, { className: "flex items-center justify-between w-full p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors", children: [
       /* @__PURE__ */ jsx("h3", { className: "font-medium text-gray-900", children: "Advanced Filters" }),
-      /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2", children: [
-        isActive && /* @__PURE__ */ jsx("span", { className: "text-xs px-2 py-1 bg-purple-100 text-purple-700 rounded-full", children: "Active" }),
-        isOpen ? /* @__PURE__ */ jsx(ChevronDown, { className: "h-4 w-4" }) : /* @__PURE__ */ jsx(ChevronRight, { className: "h-4 w-4" })
-      ] })
+      /* @__PURE__ */ jsx("div", { className: "flex items-center gap-2", children: isOpen ? /* @__PURE__ */ jsx(ChevronDown, { className: "h-4 w-4" }) : /* @__PURE__ */ jsx(ChevronRight, { className: "h-4 w-4" }) })
     ] }),
     /* @__PURE__ */ jsxs(CollapsibleContent, { className: "mt-3 space-y-4", children: [
       /* @__PURE__ */ jsxs("div", { children: [
@@ -3263,7 +3305,7 @@ const FilterPanel = ({
       ]
     }
   );
-  const FilterContent = /* @__PURE__ */ jsxs("div", { className: "space-y-4", children: [
+  const FilterContent = /* @__PURE__ */ jsxs("div", { className: "space-y-6", children: [
     /* @__PURE__ */ jsx(
       ProviderFilter,
       {
@@ -3433,34 +3475,50 @@ const FilterPanel = ({
             )
           ] })
         ] }) }),
-        /* @__PURE__ */ jsx("div", { className: "overflow-y-auto px-4 pb-6", children: /* @__PURE__ */ jsx("div", { className: "space-y-6 pt-4", children: FilterContent }) })
+        /* @__PURE__ */ jsx(
+          ScrollableContainer,
+          {
+            maxHeight: "max-h-[calc(85vh-12rem)]",
+            className: "px-4 pb-6",
+            showIndicators: true,
+            children: /* @__PURE__ */ jsx("div", { className: "space-y-6 pt-4", children: FilterContent })
+          }
+        )
       ] })
     ] });
   }
   return /* @__PURE__ */ jsxs(Sheet, { open: isOpen, onOpenChange, children: [
     /* @__PURE__ */ jsx(SheetTrigger, { asChild: true, children: TriggerButton }),
-    /* @__PURE__ */ jsxs(SheetContent, { className: "w-[400px] sm:w-[540px] overflow-y-auto", children: [
-      /* @__PURE__ */ jsxs(SheetHeader, { className: "pb-6", children: [
-        /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between", children: [
-          /* @__PURE__ */ jsx(SheetTitle, { className: "text-xl font-semibold text-gray-900", children: "Filter & Search" }),
-          activeFiltersCount > 0 && /* @__PURE__ */ jsxs(
-            Button,
-            {
-              variant: "ghost",
-              size: "sm",
-              onClick: clearAllFilters,
-              className: "text-gray-500 hover:text-gray-700 hover:bg-red-50 transition-colors",
-              children: [
-                /* @__PURE__ */ jsx(RotateCcw, { className: "h-4 w-4 mr-1" }),
-                "Clear All"
-              ]
-            }
-          )
-        ] }),
-        /* @__PURE__ */ jsx(SheetDescription, { className: "text-gray-600", children: "Refine your search with advanced filtering options" })
-      ] }),
-      FilterContent
-    ] })
+    /* @__PURE__ */ jsx(SheetContent, { className: "w-[400px] sm:w-[540px]", children: /* @__PURE__ */ jsxs(
+      ScrollableContainer,
+      {
+        maxHeight: "h-full",
+        className: "pb-6",
+        showIndicators: true,
+        children: [
+          /* @__PURE__ */ jsxs(SheetHeader, { className: "pb-6", children: [
+            /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between", children: [
+              /* @__PURE__ */ jsx(SheetTitle, { className: "text-xl font-semibold text-gray-900", children: "Filter & Search" }),
+              activeFiltersCount > 0 && /* @__PURE__ */ jsxs(
+                Button,
+                {
+                  variant: "ghost",
+                  size: "sm",
+                  onClick: clearAllFilters,
+                  className: "text-gray-500 hover:text-gray-700 hover:bg-red-50 transition-colors",
+                  children: [
+                    /* @__PURE__ */ jsx(RotateCcw, { className: "h-4 w-4 mr-1" }),
+                    "Clear All"
+                  ]
+                }
+              )
+            ] }),
+            /* @__PURE__ */ jsx(SheetDescription, { className: "text-gray-600", children: "Refine your search with advanced filtering options" })
+          ] }),
+          FilterContent
+        ]
+      }
+    ) })
   ] });
 };
 const capitalizeFirstLetter$2 = (str) => {
@@ -3695,6 +3753,28 @@ const FilterControls = ({
   initialFilters
 }) => {
   const isMobile = useIsMobile();
+  const { providerCounts, availableCategories } = useMemo(() => {
+    const counts = {};
+    boxesData.forEach((box) => {
+      if (box == null ? void 0 : box.provider) {
+        counts[box.provider] = (counts[box.provider] || 0) + 1;
+      }
+    });
+    const categories = [...new Set(boxesData.map((box) => box.category).filter(Boolean))];
+    const filteredCategories = categories.filter((cat) => cat !== "Unknown").slice(0, 8);
+    return {
+      providerCounts: counts,
+      availableCategories: filteredCategories
+    };
+  }, [boxesData]);
+  const handleProviderClick = (providerId) => {
+    const newProviders = filters.providers.includes(providerId) ? filters.providers.filter((p) => p !== providerId) : [...filters.providers, providerId];
+    onFiltersChange({ ...filters, providers: newProviders });
+  };
+  const handleCategoryClick = (category) => {
+    const newCategories = filters.categories.includes(category) ? filters.categories.filter((c) => c !== category) : [...filters.categories, category];
+    onFiltersChange({ ...filters, categories: newCategories });
+  };
   return /* @__PURE__ */ jsxs(
     motion.div,
     {
@@ -3725,6 +3805,63 @@ const FilterControls = ({
               children: /* @__PURE__ */ jsx(FilterX, { className: `${isMobile ? "h-4 w-4" : "h-3 w-3"}` })
             }
           )
+        ] }),
+        /* @__PURE__ */ jsxs("div", { className: "space-y-3 p-3 bg-purple-50/50 rounded-lg border border-purple-200/50", children: [
+          /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between", children: [
+            /* @__PURE__ */ jsx("span", { className: "text-sm font-medium text-purple-700", children: "Quick Filters" }),
+            (filters.providers.length > 0 || filters.categories.length > 0) && /* @__PURE__ */ jsx(Badge, { variant: "secondary", className: "bg-purple-100 text-purple-700 text-xs", children: filters.providers.length + filters.categories.length })
+          ] }),
+          /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
+            /* @__PURE__ */ jsx("span", { className: "text-xs font-medium text-gray-600", children: "Providers" }),
+            /* @__PURE__ */ jsx("div", { className: "flex flex-wrap gap-2", children: Object.entries(PROVIDER_CONFIGS).map(([providerId, config]) => {
+              const isSelected = filters.providers.includes(providerId);
+              const count2 = providerCounts[providerId] || 0;
+              return /* @__PURE__ */ jsxs(
+                "button",
+                {
+                  onClick: () => handleProviderClick(providerId),
+                  className: `
+                    flex items-center gap-2 px-3 py-2 rounded-full border transition-all duration-200 text-xs
+                    ${isSelected ? "border-purple-400 bg-purple-50 text-purple-700" : "border-gray-200 bg-white hover:border-gray-300 text-gray-600"}
+                  `,
+                  children: [
+                    /* @__PURE__ */ jsx(
+                      ProviderLogo,
+                      {
+                        providerId,
+                        size: "sm",
+                        enhanced: true
+                      }
+                    ),
+                    /* @__PURE__ */ jsx("span", { className: "font-medium", children: config.displayName }),
+                    count2 > 0 && /* @__PURE__ */ jsx("span", { className: `
+                      px-1.5 py-0.5 rounded-full text-xs
+                      ${isSelected ? "bg-purple-200 text-purple-800" : "bg-gray-100 text-gray-600"}
+                    `, children: count2 })
+                  ]
+                },
+                providerId
+              );
+            }) })
+          ] }),
+          /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
+            /* @__PURE__ */ jsx("span", { className: "text-xs font-medium text-gray-600", children: "Categories" }),
+            /* @__PURE__ */ jsx("div", { className: "flex flex-wrap gap-1.5", children: availableCategories.map((category) => {
+              const isSelected = filters.categories.includes(category);
+              return /* @__PURE__ */ jsx(
+                "button",
+                {
+                  onClick: () => handleCategoryClick(category),
+                  className: `
+                    px-2 py-1 rounded-full text-xs font-medium transition-all duration-200
+                    ${isSelected ? "bg-purple-100 text-purple-700 border border-purple-300" : "bg-gray-100 text-gray-600 border border-gray-200 hover:bg-gray-200"}
+                  `,
+                  children: category
+                },
+                category
+              );
+            }) })
+          ] })
         ] }),
         /* @__PURE__ */ jsxs("div", { className: `flex gap-3 items-stretch ${isMobile ? "flex-col w-full" : "flex-wrap justify-between"}`, children: [
           /* @__PURE__ */ jsxs("div", { className: `flex gap-3 ${isMobile ? "w-full" : "items-center flex-wrap"}`, children: [
@@ -4412,7 +4549,7 @@ const BoxfolioDashboard = ({
           /* @__PURE__ */ jsx("div", { className: "flex items-center justify-center", children: /* @__PURE__ */ jsx(
             "img",
             {
-              src: "images/208a85a9-4108-4646-8cb0-aed2a05655ab.png",
+              src: "/images/208a85a9-4108-4646-8cb0-aed2a05655ab.png",
               alt: "Unpacked.gg Logo",
               className: "h-32 object-contain"
             }
@@ -5451,15 +5588,15 @@ const useHuntReport = (boxesData, selectedItem) => {
 const Hub = () => {
   const [searchParams] = useSearchParams();
   const [showAlert, setShowAlert] = useState(true);
+  useState("");
   const isMobile = useIsMobile();
   const providerParam = searchParams.get("provider");
-  const selectedProviders = providerParam ? [providerParam] : [];
   const {
     summaryData,
     boxesData,
     loading,
     error
-  } = useUnifiedBoxData(selectedProviders.length > 0 ? selectedProviders : void 0, 2e3);
+  } = useUnifiedBoxData(void 0, 2e3);
   const {
     searchQuery,
     searchResults,
@@ -5480,7 +5617,7 @@ const Hub = () => {
     return "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=300&fit=crop";
   };
   console.log("Hub component render:", {
-    selectedProviders,
+    providerParam,
     summaryData,
     boxesCount: boxesData.length,
     loading,
@@ -5492,26 +5629,13 @@ const Hub = () => {
         "Error loading mystery box data: ",
         error
       ] }),
-      /* @__PURE__ */ jsx(
-        "button",
-        {
-          onClick: () => window.location.reload(),
-          className: "px-4 py-2 bg-gray-200 rounded hover:bg-gray-300",
-          children: "Retry"
-        }
-      )
+      /* @__PURE__ */ jsx("button", { onClick: () => window.location.reload(), className: "px-4 py-2 bg-gray-200 rounded hover:bg-gray-300", children: "Retry" })
     ] }) });
   }
   return /* @__PURE__ */ jsxs(Fragment, { children: [
     /* @__PURE__ */ jsxs(Helmet, { children: [
       /* @__PURE__ */ jsx("title", { children: "Mystery Box Hub - Compare Drop Rates & Expected Values | Unpacked.gg" }),
-      /* @__PURE__ */ jsx(
-        "meta",
-        {
-          name: "description",
-          content: "Compare mystery box drop rates, expected values, and volatility across RillaBox, Hypedrop, Cases.GG, and Luxdrop. Find the most profitable mystery boxes with comprehensive analytics."
-        }
-      ),
+      /* @__PURE__ */ jsx("meta", { name: "description", content: "Compare mystery box drop rates, expected values, and volatility across RillaBox, Hypedrop, Cases.GG, and Luxdrop. Find the most profitable mystery boxes with comprehensive analytics." }),
       /* @__PURE__ */ jsx("meta", { name: "keywords", content: "mystery boxes, drop rates, expected value, RillaBox, Hypedrop, Cases.GG, Luxdrop, unboxing, case opening, gambling analytics" }),
       /* @__PURE__ */ jsx("meta", { property: "og:title", content: "Mystery Box Analytics Hub | Unpacked.gg" }),
       /* @__PURE__ */ jsx("meta", { property: "og:description", content: "Find the best mystery boxes with comprehensive drop rate analysis and expected value calculations across multiple providers." }),
@@ -5530,37 +5654,32 @@ const Hub = () => {
       }) })
     ] }),
     /* @__PURE__ */ jsxs(DotBackground, { className: "min-h-screen", children: [
-      showAlert && /* @__PURE__ */ jsx("div", { className: "mx-4 sm:mx-6 mt-4 sm:mt-6", children: /* @__PURE__ */ jsxs(Alert, { className: "bg-blue-50 border-blue-200 text-blue-800 relative", children: [
-        /* @__PURE__ */ jsx(Info, { className: "h-4 w-4 text-blue-600" }),
-        /* @__PURE__ */ jsx(AlertDescription, { className: "text-sm leading-relaxed text-blue-800 pr-8", children: "We gather this information and data to the best of our knowledge to provide value, but we cannot guarantee that the data is always accurate." }),
+      showAlert && /* @__PURE__ */ jsx("div", { className: "mx-4 sm:mx-6 mt-4 sm:mt-6", children: /* @__PURE__ */ jsxs("div", { className: "relative", children: [
+        /* @__PURE__ */ jsxs(Alert, { className: "bg-blue-50 border-blue-200 text-blue-800", children: [
+          /* @__PURE__ */ jsx(Info, { className: "h-4 w-4 text-blue-600" }),
+          /* @__PURE__ */ jsx(AlertDescription, { className: "text-sm leading-relaxed text-blue-800 pr-10", children: "We gather this information and data to the best of our knowledge to provide value, but we cannot guarantee that the data is always accurate." })
+        ] }),
         /* @__PURE__ */ jsx(
           "button",
           {
             onClick: () => setShowAlert(false),
-            className: "absolute top-2 right-2 p-1 rounded-sm text-blue-600 hover:text-blue-800 hover:bg-blue-100 transition-colors",
+            className: "absolute top-1.5 right-1.5 p-1.5 rounded-full text-gray-600 hover:text-gray-800 hover:bg-blue-100 transition-colors flex items-center justify-center w-7 h-7",
             "aria-label": "Dismiss alert",
-            children: /* @__PURE__ */ jsx(X, { className: "h-4 w-4" })
+            children: /* @__PURE__ */ jsx(X, { className: "h-3.5 w-3.5" })
           }
         )
       ] }) }),
       /* @__PURE__ */ jsx("div", { className: "p-6 md:p-8", children: /* @__PURE__ */ jsxs("div", { className: "max-w-7xl mx-auto space-y-12 md:space-y-16", children: [
         /* @__PURE__ */ jsxs("header", { className: "text-center space-y-6", children: [
           /* @__PURE__ */ jsxs("div", { className: `flex items-center justify-center ${isMobile ? "gap-2" : "gap-4"}`, children: [
-            /* @__PURE__ */ jsx(
-              "img",
-              {
-                src: "images/208a85a9-4108-4646-8cb0-aed2a05655ab.png",
-                alt: "Unpacked.gg Logo",
-                className: `object-contain ${isMobile ? "h-20" : "h-32"}`
-              }
-            ),
+            /* @__PURE__ */ jsx("img", { src: "/images/208a85a9-4108-4646-8cb0-aed2a05655ab.png", alt: "Unpacked.gg Logo", className: `object-contain ${isMobile ? "h-20" : "h-32"}` }),
             /* @__PURE__ */ jsx("div", { className: `${isMobile ? "w-2" : "w-0.5"} bg-black ${isMobile ? "h-12" : "h-16"} shadow-[0_0_4px_rgba(255,255,255,0.8)]` }),
             /* @__PURE__ */ jsx("span", { className: `font-bold text-gray-800 ${isMobile ? "text-xl" : "text-3xl"}`, children: "Hub" })
           ] }),
           /* @__PURE__ */ jsxs("div", { className: "space-y-6", children: [
             /* @__PURE__ */ jsx("div", { className: "py-4", children: /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-600 to-purple-700 bg-clip-text text-transparent leading-[1.2] pb-2", children: "Online Mystery Boxes – Find Yours" }) }),
             /* @__PURE__ */ jsx("div", { className: "inline-block mx-auto", children: /* @__PURE__ */ jsx("div", { className: "bg-white/20 backdrop-blur-lg rounded-xl border border-white/30 shadow-lg shadow-purple-500/10 px-4 py-2", children: /* @__PURE__ */ jsx("p", { className: "text-xl text-gray-700 font-semibold leading-relaxed", children: "Unbox the Best Mystery Boxes – Don't Settle for Poor Drop Rates" }) }) }),
-            /* @__PURE__ */ jsx("div", { className: "max-w-3xl mx-auto", children: /* @__PURE__ */ jsx("div", { className: "inline-block bg-white/20 backdrop-blur-lg rounded-xl border border-white/30 shadow-lg shadow-purple-500/10 px-4 py-2", children: /* @__PURE__ */ jsx("p", { className: "text-base text-gray-700 leading-relaxed", children: "Discover profitable mystery boxes with comprehensive analytics. Compare expected values, drop rates, and volatility across multiple providers including RillaBox, Hypedrop, Cases.GG, and Luxdrop." }) }) })
+            /* @__PURE__ */ jsx("div", { className: "max-w-3xl mx-auto", children: /* @__PURE__ */ jsx("div", { className: "inline-block bg-white/20 backdrop-blur-lg rounded-xl border border-white/30 shadow-lg shadow-purple-500/10 px-4 py-2", children: /* @__PURE__ */ jsx("p", { className: "text-base text-gray-700 leading-relaxed", children: "Discover profitable mystery boxes with comprehensive analytics. Compare expected values, drop rates, and volatility across multiple providers." }) }) })
           ] })
         ] }),
         /* @__PURE__ */ jsxs("div", { className: "relative w-fit mx-auto", children: [
@@ -5569,19 +5688,7 @@ const Hub = () => {
         ] }),
         /* @__PURE__ */ jsxs("section", { children: [
           /* @__PURE__ */ jsx("h2", { className: "text-2xl font-bold text-gray-800 mb-6 text-center", children: "Item Hunter - Find Mystery Boxes with Your Target Items" }),
-          /* @__PURE__ */ jsx(
-            HuntExperience,
-            {
-              searchQuery,
-              searchResults,
-              selectedItem,
-              huntResults,
-              onSearchChange: handleSearch,
-              onItemSelect: handleItemSelect,
-              onClearSearch: handleClearSearch,
-              getItemImage
-            }
-          )
+          /* @__PURE__ */ jsx(HuntExperience, { searchQuery, searchResults, selectedItem, huntResults, onSearchChange: handleSearch, onItemSelect: handleItemSelect, onClearSearch: handleClearSearch, getItemImage })
         ] }),
         /* @__PURE__ */ jsxs("section", { children: [
           /* @__PURE__ */ jsx("h2", { className: "text-2xl font-bold text-gray-800 mb-6 text-center", children: "Mystery Box Analytics & Statistics" }),
@@ -5595,16 +5702,7 @@ const Hub = () => {
             ] })
           ) : (
             // Show actual data once loaded
-            summaryData && /* @__PURE__ */ jsx(
-              BoxfolioDashboard,
-              {
-                summaryData,
-                boxesData,
-                isUnified: true,
-                showOnlyStats: true,
-                selectedProvider: providerParam
-              }
-            )
+            summaryData && /* @__PURE__ */ jsx(BoxfolioDashboard, { summaryData, boxesData, isUnified: true, showOnlyStats: true, selectedProvider: providerParam })
           ) })
         ] }),
         /* @__PURE__ */ jsxs("section", { children: [
@@ -5614,7 +5712,9 @@ const Hub = () => {
               /* @__PURE__ */ jsx("div", { className: "flex-1", children: /* @__PURE__ */ jsx("div", { className: "h-10 bg-gray-200 rounded animate-pulse" }) }),
               /* @__PURE__ */ jsx("div", { className: "w-48", children: /* @__PURE__ */ jsx("div", { className: "h-10 bg-gray-200 rounded animate-pulse" }) })
             ] }) }),
-            /* @__PURE__ */ jsx("div", { className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6", children: Array.from({ length: 12 }).map((_, index) => /* @__PURE__ */ jsx("div", { className: "animate-pulse", children: /* @__PURE__ */ jsxs("div", { className: "bg-white/10 backdrop-blur-sm rounded-xl p-4 space-y-4", children: [
+            /* @__PURE__ */ jsx("div", { className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6", children: Array.from({
+              length: 12
+            }).map((_, index) => /* @__PURE__ */ jsx("div", { className: "animate-pulse", children: /* @__PURE__ */ jsxs("div", { className: "bg-white/10 backdrop-blur-sm rounded-xl p-4 space-y-4", children: [
               /* @__PURE__ */ jsx("div", { className: "h-40 bg-gray-200 rounded-lg" }),
               /* @__PURE__ */ jsx("div", { className: "h-6 bg-gray-200 rounded w-3/4" }),
               /* @__PURE__ */ jsxs("div", { className: "flex justify-between", children: [
@@ -5623,16 +5723,7 @@ const Hub = () => {
               ] }),
               /* @__PURE__ */ jsx("div", { className: "h-8 bg-gray-200 rounded w-20 mx-auto" })
             ] }) }, index)) })
-          ] }) : summaryData && /* @__PURE__ */ jsx(
-            BoxfolioDashboard,
-            {
-              summaryData,
-              boxesData,
-              isUnified: true,
-              showOnlyContent: true,
-              selectedProvider: providerParam
-            }
-          )
+          ] }) : summaryData && /* @__PURE__ */ jsx(BoxfolioDashboard, { summaryData, boxesData, isUnified: true, showOnlyContent: true, selectedProvider: providerParam })
         ] })
       ] }) })
     ] })
@@ -6080,7 +6171,7 @@ const CategoryStatsCard = ({ stats, title, type }) => {
       /* @__PURE__ */ jsxs("div", { className: "text-center group", children: [
         /* @__PURE__ */ jsx("div", { className: `font-bold text-lg ${getOddsGradient(stats.totalDropRate * 100)} 
               transition-all duration-300 group-hover:scale-110 motion-reduce:group-hover:scale-100`, children: formatPercentage(stats.totalDropRate * 100) }),
-        /* @__PURE__ */ jsxs("div", { className: "text-gray-300 text-xs font-medium", children: [
+        /* @__PURE__ */ jsxs("div", { className: "text-gray-700 text-xs font-medium", children: [
           categoryLabel,
           " Drop Odds"
         ] })
@@ -6091,7 +6182,7 @@ const CategoryStatsCard = ({ stats, title, type }) => {
           stats.evContribution.toFixed(1),
           "%"
         ] }),
-        /* @__PURE__ */ jsxs("div", { className: "text-gray-300 text-xs font-medium", children: [
+        /* @__PURE__ */ jsxs("div", { className: "text-gray-700 text-xs font-medium", children: [
           categoryLabel,
           " EV Share"
         ] })
@@ -6099,16 +6190,16 @@ const CategoryStatsCard = ({ stats, title, type }) => {
       /* @__PURE__ */ jsxs("div", { className: "text-center group", children: [
         /* @__PURE__ */ jsx("div", { className: `font-bold text-lg ${getRatioGradient(stats.oddsToEvRatio)}
               transition-all duration-300 group-hover:scale-110 motion-reduce:group-hover:scale-100 drop-shadow-sm`, children: formatRatio(stats.oddsToEvRatio) }),
-        /* @__PURE__ */ jsx("div", { className: "text-gray-300 text-xs font-medium", children: "Odds/EV Ratio" })
+        /* @__PURE__ */ jsx("div", { className: "text-gray-700 text-xs font-medium", children: "Odds/EV Ratio" })
       ] })
     ] }),
-    stats.itemCount > 0 && /* @__PURE__ */ jsx("div", { className: "mt-3 pt-2 border-t border-white/10", children: /* @__PURE__ */ jsx("div", { className: "text-center text-xs text-gray-300", children: /* @__PURE__ */ jsxs("span", { className: "font-medium", children: [
+    stats.itemCount > 0 && /* @__PURE__ */ jsx("div", { className: "mt-3 pt-2 border-t border-white/10", children: /* @__PURE__ */ jsx("div", { className: "text-center text-xs text-gray-700", children: /* @__PURE__ */ jsxs("span", { className: "font-medium", children: [
       categoryLabel,
       " Value Range: ",
-      /* @__PURE__ */ jsxs("span", { className: "text-gray-800", children: [
+      /* @__PURE__ */ jsxs("span", { className: "text-gray-900", children: [
         formatCompactCurrency(stats.minValue),
         " ",
-        /* @__PURE__ */ jsx("span", { className: "text-gray-600", children: "-" }),
+        /* @__PURE__ */ jsx("span", { className: "text-gray-700", children: "-" }),
         " ",
         formatCompactCurrency(stats.maxValue)
       ] })
@@ -6122,6 +6213,12 @@ const BoxDetailContent = ({ box }) => {
   var _a2;
   const [imageLoaded, setImageLoaded] = useState(false);
   const isMobile = useIsMobile();
+  const providerLinks = {
+    "hypedrop": "https://unpacked.gg/go/hypedrop",
+    "rillabox": "https://unpacked.gg/go/rillabox",
+    "casesgg": "https://unpacked.gg/go/cases-gg",
+    "luxdrop": "https://unpacked.gg/go/luxdrop"
+  };
   const getVolatilityGradient = (volatilityPercent2) => {
     if (volatilityPercent2 >= 80) return "text-purple-700 font-bold";
     if (volatilityPercent2 >= 50) return "text-purple-600 font-bold";
@@ -6187,27 +6284,36 @@ const BoxDetailContent = ({ box }) => {
     /* @__PURE__ */ jsx("div", { className: "text-center space-y-4", children: /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-center gap-3 flex-wrap", children: [
       /* @__PURE__ */ jsx("h1", { className: `${isMobile ? "text-2xl" : "text-4xl"} font-bold text-gray-800`, children: box.box_name }),
       /* @__PURE__ */ jsx("span", { className: `text-gray-600 font-normal ${isMobile ? "text-xl" : "text-2xl"}`, children: "|" }),
-      /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2", children: [
-        /* @__PURE__ */ jsx(
-          ProviderLogo,
-          {
-            providerId: box.provider || "rillabox",
-            size: isMobile ? "sm" : "md",
-            enhanced: true,
-            className: "transition-transform duration-200 hover:scale-[1.4]"
-          }
-        ),
-        /* @__PURE__ */ jsx("span", { className: `${isMobile ? "text-lg" : "text-xl"} font-bold text-purple-600`, children: ((_a2 = PROVIDER_CONFIGS[box.provider || "rillabox"]) == null ? void 0 : _a2.displayName) || "RillaBox" })
-      ] })
+      /* @__PURE__ */ jsxs(
+        "button",
+        {
+          onClick: () => window.open(providerLinks[box.provider || "rillabox"], "_blank"),
+          className: "flex items-center gap-2 hover:bg-white/10 p-2 rounded-lg transition-all duration-200 cursor-pointer group",
+          title: "Visit provider website",
+          children: [
+            /* @__PURE__ */ jsx(
+              ProviderLogo,
+              {
+                providerId: box.provider || "rillabox",
+                size: isMobile ? "sm" : "md",
+                enhanced: true,
+                className: "transition-transform duration-200 hover:scale-[1.4] group-hover:scale-[1.2]"
+              }
+            ),
+            /* @__PURE__ */ jsx("span", { className: `${isMobile ? "text-lg" : "text-xl"} font-bold text-purple-600 group-hover:text-purple-800 transition-colors duration-200`, children: ((_a2 = PROVIDER_CONFIGS[box.provider || "rillabox"]) == null ? void 0 : _a2.displayName) || "RillaBox" }),
+            /* @__PURE__ */ jsx(ExternalLink, { className: `${isMobile ? "h-4 w-4" : "h-5 w-5"} transform rotate-45 text-purple-600 group-hover:text-purple-800 group-hover:scale-110 transition-all duration-200` })
+          ]
+        }
+      )
     ] }) }),
     /* @__PURE__ */ jsxs("div", { className: `grid ${isMobile ? "grid-cols-1" : "md:grid-cols-2"} ${isMobile ? "gap-4" : "gap-6"}`, children: [
       /* @__PURE__ */ jsxs("div", { className: "space-y-4", children: [
         /* @__PURE__ */ jsxs(
           "div",
           {
-            className: `w-full ${isMobile ? "h-48" : "h-64"} rounded-xl overflow-hidden p-4 shadow-lg border border-purple-200 relative`,
+            className: `w-full ${isMobile ? "h-48" : "h-64"} rounded-xl overflow-hidden p-4 shadow-lg border border-purple-200 relative cursor-pointer transition-transform duration-300 hover:scale-105`,
             style: {
-              backgroundImage: `url('images/90a8beae-8a8c-4f9a-bfd2-d7dc5be9de82.png')`,
+              backgroundImage: `url('/images/90a8beae-8a8c-4f9a-bfd2-d7dc5be9de82.png')`,
               backgroundSize: "cover",
               backgroundRepeat: "no-repeat",
               backgroundPosition: "center",
@@ -6272,13 +6378,11 @@ const BoxDetailContent = ({ box }) => {
           /* @__PURE__ */ jsxs("div", { className: `${isMobile ? "w-full" : "flex-[2]"} ${isMobile ? "p-3" : "p-4"} bg-purple-50 backdrop-blur-sm rounded-xl shadow-lg border border-purple-200 flex flex-col`, children: [
             /* @__PURE__ */ jsx("h4", { className: `${isMobile ? "text-sm" : "text-sm"} font-medium text-gray-700 mb-3`, children: "All Tags" }),
             /* @__PURE__ */ jsx(
-              "div",
+              ScrollableContainer,
               {
-                className: "overflow-y-auto",
-                style: {
-                  height: isMobile ? "auto" : "calc(8rem + 1rem)",
-                  maxHeight: isMobile ? "6rem" : "calc(8rem + 1rem)"
-                },
+                maxHeight: isMobile ? "max-h-24" : "max-h-36",
+                className: "w-full",
+                showIndicators: true,
                 children: /* @__PURE__ */ jsx("div", { className: `${isMobile ? "flex flex-wrap gap-2" : "grid grid-cols-2 gap-2 pr-2"}`, children: box.tags.map((tag) => /* @__PURE__ */ jsx(
                   Badge,
                   {
@@ -6322,25 +6426,32 @@ const BoxDetailContent = ({ box }) => {
         ] }),
         sortedAllItems.length > 0 && /* @__PURE__ */ jsxs("div", { children: [
           /* @__PURE__ */ jsx("h3", { className: `${isMobile ? "text-base" : "text-lg"} font-semibold mb-3 text-gray-800`, children: "All Items (by Drop Rate & Value)" }),
-          /* @__PURE__ */ jsxs("div", { className: `space-y-2 ${isMobile ? "max-h-60" : "max-h-80"} overflow-y-auto`, children: [
-            sortedAllItems.slice(0, 50).map((item, i) => /* @__PURE__ */ jsxs(
-              "div",
-              {
-                className: `flex items-center gap-2 ${isMobile ? "p-2" : "p-2"} bg-purple-50 rounded border border-purple-200 ${isMobile ? "text-xs" : "text-sm"} ${isMobile ? "min-h-[44px]" : ""}`,
-                children: [
-                  /* @__PURE__ */ jsx("div", { className: "flex-1 min-w-0", children: /* @__PURE__ */ jsx("div", { className: `font-medium truncate text-gray-800 ${isMobile ? "text-xs" : ""}`, children: item.name }) }),
-                  /* @__PURE__ */ jsx("div", { className: `text-purple-600 font-mono ${isMobile ? "text-xs" : "text-xs"}`, children: formatDropRate(item.drop_chance) }),
-                  /* @__PURE__ */ jsx("div", { className: `text-purple-600 font-semibold ${isMobile ? "text-xs" : "text-xs"} min-w-0`, children: formatCurrency(item.value) })
-                ]
-              },
-              i
-            )),
-            sortedAllItems.length > 50 && /* @__PURE__ */ jsxs("div", { className: `text-center text-gray-500 ${isMobile ? "text-xs" : "text-sm"} py-2`, children: [
-              "...and ",
-              sortedAllItems.length - 50,
-              " more items"
-            ] })
-          ] })
+          /* @__PURE__ */ jsxs(
+            ScrollableContainer,
+            {
+              maxHeight: isMobile ? "max-h-60" : "max-h-80",
+              className: "space-y-2",
+              children: [
+                sortedAllItems.slice(0, 50).map((item, i) => /* @__PURE__ */ jsxs(
+                  "div",
+                  {
+                    className: `flex items-center gap-2 ${isMobile ? "p-2" : "p-2"} bg-purple-50 rounded border border-purple-200 ${isMobile ? "text-xs" : "text-sm"} ${isMobile ? "min-h-[44px]" : ""} transition-transform duration-200 hover:scale-[1.02] cursor-pointer`,
+                    children: [
+                      /* @__PURE__ */ jsx("div", { className: "flex-1 min-w-0", children: /* @__PURE__ */ jsx("div", { className: `font-medium truncate text-gray-800 ${isMobile ? "text-xs" : ""}`, children: item.name }) }),
+                      /* @__PURE__ */ jsx("div", { className: `text-purple-600 font-mono ${isMobile ? "text-xs" : "text-xs"}`, children: formatDropRate(item.drop_chance) }),
+                      /* @__PURE__ */ jsx("div", { className: `text-purple-600 font-semibold ${isMobile ? "text-xs" : "text-xs"} min-w-0`, children: formatCurrency(item.value) })
+                    ]
+                  },
+                  i
+                )),
+                sortedAllItems.length > 50 && /* @__PURE__ */ jsxs("div", { className: `text-center text-gray-500 ${isMobile ? "text-xs" : "text-sm"} py-2`, children: [
+                  "...and ",
+                  sortedAllItems.length - 50,
+                  " more items"
+                ] })
+              ]
+            }
+          )
         ] })
       ] }),
       /* @__PURE__ */ jsxs("div", { className: "space-y-6", children: [
@@ -6361,33 +6472,40 @@ const BoxDetailContent = ({ box }) => {
               type: "jackpot"
             }
           ),
-          /* @__PURE__ */ jsx("div", { className: `space-y-2 ${isMobile ? "max-h-48" : "max-h-60"} overflow-y-auto`, children: box.jackpot_items && box.jackpot_items.length > 0 ? box.jackpot_items.slice(0, 20).map((item, i) => /* @__PURE__ */ jsxs(
-            "div",
+          /* @__PURE__ */ jsx(
+            ScrollableContainer,
             {
-              className: `flex items-center gap-2 p-2 bg-purple-50 rounded border border-purple-200 ${isMobile ? "min-h-[44px]" : ""}`,
-              children: [
-                /* @__PURE__ */ jsx("div", { className: `${isMobile ? "w-10 h-10" : "w-12 h-12"} bg-purple-100 rounded flex items-center justify-center flex-shrink-0 p-1`, children: item.image ? /* @__PURE__ */ jsx(
-                  "img",
-                  {
-                    src: item.image,
-                    alt: item.name,
-                    className: "w-full h-full object-contain rounded",
-                    loading: "lazy",
-                    referrerPolicy: "no-referrer"
-                  }
-                ) : /* @__PURE__ */ jsx(Star, { className: `${isMobile ? "w-3 h-3" : "w-4 h-4"} text-purple-500` }) }),
-                /* @__PURE__ */ jsxs("div", { className: "flex-1 min-w-0", children: [
-                  /* @__PURE__ */ jsx("div", { className: `font-medium ${isMobile ? "text-xs" : "text-sm"} truncate text-gray-800`, children: item.name }),
-                  /* @__PURE__ */ jsxs("div", { className: `${isMobile ? "text-xs" : "text-xs"} text-purple-600 font-mono`, children: [
-                    "Drop Rate: ",
-                    formatDropRate(item.drop_chance)
-                  ] })
-                ] }),
-                /* @__PURE__ */ jsx("div", { className: `text-purple-600 font-semibold ${isMobile ? "text-xs" : "text-sm"}`, children: formatCurrency(item.value) })
-              ]
-            },
-            i
-          )) : /* @__PURE__ */ jsx("div", { className: `text-gray-500 text-center py-4 ${isMobile ? "text-sm" : ""}`, children: "No jackpot items available" }) })
+              maxHeight: isMobile ? "max-h-48" : "max-h-60",
+              className: "space-y-2",
+              children: box.jackpot_items && box.jackpot_items.length > 0 ? box.jackpot_items.slice(0, 20).map((item, i) => /* @__PURE__ */ jsxs(
+                "div",
+                {
+                  className: `flex items-center gap-2 p-2 bg-purple-50 rounded border border-purple-200 ${isMobile ? "min-h-[44px]" : ""} transition-transform duration-200 hover:scale-[1.02] cursor-pointer`,
+                  children: [
+                    /* @__PURE__ */ jsx("div", { className: `${isMobile ? "w-10 h-10" : "w-12 h-12"} bg-purple-100 rounded flex items-center justify-center flex-shrink-0 p-1`, children: item.image ? /* @__PURE__ */ jsx(
+                      "img",
+                      {
+                        src: item.image,
+                        alt: item.name,
+                        className: "w-full h-full object-contain rounded",
+                        loading: "lazy",
+                        referrerPolicy: "no-referrer"
+                      }
+                    ) : /* @__PURE__ */ jsx(Star, { className: `${isMobile ? "w-3 h-3" : "w-4 h-4"} text-purple-500` }) }),
+                    /* @__PURE__ */ jsxs("div", { className: "flex-1 min-w-0", children: [
+                      /* @__PURE__ */ jsx("div", { className: `font-medium ${isMobile ? "text-xs" : "text-sm"} truncate text-gray-800`, children: item.name }),
+                      /* @__PURE__ */ jsxs("div", { className: `${isMobile ? "text-xs" : "text-xs"} text-purple-600 font-mono`, children: [
+                        "Drop Rate: ",
+                        formatDropRate(item.drop_chance)
+                      ] })
+                    ] }),
+                    /* @__PURE__ */ jsx("div", { className: `text-purple-600 font-semibold ${isMobile ? "text-xs" : "text-sm"}`, children: formatCurrency(item.value) })
+                  ]
+                },
+                i
+              )) : /* @__PURE__ */ jsx("div", { className: `text-gray-500 text-center py-4 ${isMobile ? "text-sm" : ""}`, children: "No jackpot items available" })
+            }
+          )
         ] }),
         /* @__PURE__ */ jsxs("div", { children: [
           /* @__PURE__ */ jsxs("h3", { className: `${isMobile ? "text-base" : "text-lg"} font-semibold mb-3 flex items-center gap-2 text-gray-800`, children: [
@@ -6406,33 +6524,40 @@ const BoxDetailContent = ({ box }) => {
               type: "common"
             }
           ),
-          /* @__PURE__ */ jsx("div", { className: `space-y-2 ${isMobile ? "max-h-48" : "max-h-60"} overflow-y-auto`, children: box.unwanted_items && box.unwanted_items.length > 0 ? box.unwanted_items.slice(0, 20).map((item, i) => /* @__PURE__ */ jsxs(
-            "div",
+          /* @__PURE__ */ jsx(
+            ScrollableContainer,
             {
-              className: `flex items-center gap-2 p-2 bg-red-50 rounded border border-red-200 ${isMobile ? "min-h-[44px]" : ""}`,
-              children: [
-                /* @__PURE__ */ jsx("div", { className: `${isMobile ? "w-10 h-10" : "w-12 h-12"} bg-red-100 rounded flex items-center justify-center flex-shrink-0 p-1`, children: item.image ? /* @__PURE__ */ jsx(
-                  "img",
-                  {
-                    src: item.image,
-                    alt: item.name,
-                    className: "w-full h-full object-contain rounded",
-                    loading: "lazy",
-                    referrerPolicy: "no-referrer"
-                  }
-                ) : /* @__PURE__ */ jsx(AlertTriangle, { className: `${isMobile ? "w-3 h-3" : "w-4 h-4"} text-red-500` }) }),
-                /* @__PURE__ */ jsxs("div", { className: "flex-1 min-w-0", children: [
-                  /* @__PURE__ */ jsx("div", { className: `font-medium ${isMobile ? "text-xs" : "text-sm"} truncate text-gray-800`, children: item.name }),
-                  /* @__PURE__ */ jsxs("div", { className: `${isMobile ? "text-xs" : "text-xs"} text-red-600 font-mono`, children: [
-                    "Drop Rate: ",
-                    formatDropRate(item.drop_chance)
-                  ] })
-                ] }),
-                /* @__PURE__ */ jsx("div", { className: `text-red-600 font-semibold ${isMobile ? "text-xs" : "text-sm"}`, children: formatCurrency(item.value) })
-              ]
-            },
-            i
-          )) : /* @__PURE__ */ jsx("div", { className: `text-gray-500 text-center py-4 ${isMobile ? "text-sm" : ""}`, children: "No common items available" }) })
+              maxHeight: isMobile ? "max-h-48" : "max-h-60",
+              className: "space-y-2",
+              children: box.unwanted_items && box.unwanted_items.length > 0 ? box.unwanted_items.slice(0, 20).map((item, i) => /* @__PURE__ */ jsxs(
+                "div",
+                {
+                  className: `flex items-center gap-2 p-2 bg-red-50 rounded border border-red-200 ${isMobile ? "min-h-[44px]" : ""} transition-transform duration-200 hover:scale-[1.02] cursor-pointer`,
+                  children: [
+                    /* @__PURE__ */ jsx("div", { className: `${isMobile ? "w-10 h-10" : "w-12 h-12"} bg-red-100 rounded flex items-center justify-center flex-shrink-0 p-1`, children: item.image ? /* @__PURE__ */ jsx(
+                      "img",
+                      {
+                        src: item.image,
+                        alt: item.name,
+                        className: "w-full h-full object-contain rounded",
+                        loading: "lazy",
+                        referrerPolicy: "no-referrer"
+                      }
+                    ) : /* @__PURE__ */ jsx(AlertTriangle, { className: `${isMobile ? "w-3 h-3" : "w-4 h-4"} text-red-500` }) }),
+                    /* @__PURE__ */ jsxs("div", { className: "flex-1 min-w-0", children: [
+                      /* @__PURE__ */ jsx("div", { className: `font-medium ${isMobile ? "text-xs" : "text-sm"} truncate text-gray-800`, children: item.name }),
+                      /* @__PURE__ */ jsxs("div", { className: `${isMobile ? "text-xs" : "text-xs"} text-red-600 font-mono`, children: [
+                        "Drop Rate: ",
+                        formatDropRate(item.drop_chance)
+                      ] })
+                    ] }),
+                    /* @__PURE__ */ jsx("div", { className: `text-red-600 font-semibold ${isMobile ? "text-xs" : "text-sm"}`, children: formatCurrency(item.value) })
+                  ]
+                },
+                i
+              )) : /* @__PURE__ */ jsx("div", { className: `text-gray-500 text-center py-4 ${isMobile ? "text-sm" : ""}`, children: "No common items available" })
+            }
+          )
         ] })
       ] })
     ] })
