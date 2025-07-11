@@ -1890,7 +1890,7 @@ const BoxCard = React__default.memo(({ box, index, isVisible }) => {
                 {
                   className: "w-full h-40 rounded-lg mb-2 overflow-hidden p-2 border border-purple-200 backdrop-blur-sm relative",
                   style: {
-                    backgroundImage: `url('/images/90a8beae-8a8c-4f9a-bfd2-d7dc5be9de82.png')`,
+                    backgroundImage: `url('images/90a8beae-8a8c-4f9a-bfd2-d7dc5be9de82.png')`,
                     backgroundSize: "cover",
                     backgroundRepeat: "no-repeat",
                     backgroundPosition: "center",
