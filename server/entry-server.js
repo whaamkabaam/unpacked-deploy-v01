@@ -4,9 +4,12 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
 var _a, _b;
 import { jsx, jsxs, Fragment } from "react/jsx-runtime";
 import ReactDOMServer from "react-dom/server";
-import { useNavigate, useSearchParams, Link, useParams, Navigate, useLocation, Routes, Route, MemoryRouter } from "react-router-dom";
+import { useNavigate, useSearchParams, Link, useLocation, useParams, Navigate, Routes, Route, MemoryRouter } from "react-router-dom";
 import * as React from "react";
 import React__default, { Component, useState, useCallback, useEffect, useMemo, useRef } from "react";
+import fastCompare from "react-fast-compare";
+import invariant from "invariant";
+import shallowEqual from "shallowequal";
 import * as ToastPrimitives from "@radix-ui/react-toast";
 import { cva } from "class-variance-authority";
 import { X, ChevronLeft, ChevronRight, Check, Circle, ArrowUpDown, ChevronDown, Search, RotateCcw, Filter, FilterX, BarChart3, Info, Target, DollarSign, Zap, Award, Medal, Trophy, Package, List, ExternalLink, HelpCircle, Star, AlertTriangle, Home, ArrowLeft } from "lucide-react";
@@ -16,9 +19,6 @@ import { useTheme } from "next-themes";
 import { Toaster as Toaster$2 } from "sonner";
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 import { useQuery, QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import fastCompare from "react-fast-compare";
-import invariant from "invariant";
-import shallowEqual from "shallowequal";
 import { createClient } from "@supabase/supabase-js";
 import { motion, AnimatePresence } from "framer-motion";
 import { Slot } from "@radix-ui/react-slot";
@@ -29,258 +29,6 @@ import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
 import * as CollapsiblePrimitive from "@radix-ui/react-collapsible";
 import * as SliderPrimitive from "@radix-ui/react-slider";
 import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area";
-const TOAST_LIMIT = 1;
-const TOAST_REMOVE_DELAY = 1e6;
-let count = 0;
-function genId() {
-  count = (count + 1) % Number.MAX_SAFE_INTEGER;
-  return count.toString();
-}
-const toastTimeouts = /* @__PURE__ */ new Map();
-const addToRemoveQueue = (toastId) => {
-  if (toastTimeouts.has(toastId)) {
-    return;
-  }
-  const timeout = setTimeout(() => {
-    toastTimeouts.delete(toastId);
-    dispatch({
-      type: "REMOVE_TOAST",
-      toastId
-    });
-  }, TOAST_REMOVE_DELAY);
-  toastTimeouts.set(toastId, timeout);
-};
-const reducer = (state, action) => {
-  switch (action.type) {
-    case "ADD_TOAST":
-      return {
-        ...state,
-        toasts: [action.toast, ...state.toasts].slice(0, TOAST_LIMIT)
-      };
-    case "UPDATE_TOAST":
-      return {
-        ...state,
-        toasts: state.toasts.map(
-          (t) => t.id === action.toast.id ? { ...t, ...action.toast } : t
-        )
-      };
-    case "DISMISS_TOAST": {
-      const { toastId } = action;
-      if (toastId) {
-        addToRemoveQueue(toastId);
-      } else {
-        state.toasts.forEach((toast2) => {
-          addToRemoveQueue(toast2.id);
-        });
-      }
-      return {
-        ...state,
-        toasts: state.toasts.map(
-          (t) => t.id === toastId || toastId === void 0 ? {
-            ...t,
-            open: false
-          } : t
-        )
-      };
-    }
-    case "REMOVE_TOAST":
-      if (action.toastId === void 0) {
-        return {
-          ...state,
-          toasts: []
-        };
-      }
-      return {
-        ...state,
-        toasts: state.toasts.filter((t) => t.id !== action.toastId)
-      };
-  }
-};
-const listeners = [];
-let memoryState = { toasts: [] };
-function dispatch(action) {
-  memoryState = reducer(memoryState, action);
-  listeners.forEach((listener) => {
-    listener(memoryState);
-  });
-}
-function toast({ ...props }) {
-  const id = genId();
-  const update = (props2) => dispatch({
-    type: "UPDATE_TOAST",
-    toast: { ...props2, id }
-  });
-  const dismiss = () => dispatch({ type: "DISMISS_TOAST", toastId: id });
-  dispatch({
-    type: "ADD_TOAST",
-    toast: {
-      ...props,
-      id,
-      open: true,
-      onOpenChange: (open) => {
-        if (!open) dismiss();
-      }
-    }
-  });
-  return {
-    id,
-    dismiss,
-    update
-  };
-}
-function useToast() {
-  const [state, setState] = React.useState(memoryState);
-  React.useEffect(() => {
-    listeners.push(setState);
-    return () => {
-      const index = listeners.indexOf(setState);
-      if (index > -1) {
-        listeners.splice(index, 1);
-      }
-    };
-  }, [state]);
-  return {
-    ...state,
-    toast,
-    dismiss: (toastId) => dispatch({ type: "DISMISS_TOAST", toastId })
-  };
-}
-function cn(...inputs) {
-  return twMerge(clsx(inputs));
-}
-const ToastProvider = ToastPrimitives.Provider;
-const ToastViewport = React.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
-  ToastPrimitives.Viewport,
-  {
-    ref,
-    className: cn(
-      "fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]",
-      className
-    ),
-    ...props
-  }
-));
-ToastViewport.displayName = ToastPrimitives.Viewport.displayName;
-const toastVariants = cva(
-  "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full",
-  {
-    variants: {
-      variant: {
-        default: "border bg-background text-foreground",
-        destructive: "destructive group border-destructive bg-destructive text-destructive-foreground"
-      }
-    },
-    defaultVariants: {
-      variant: "default"
-    }
-  }
-);
-const Toast = React.forwardRef(({ className, variant, ...props }, ref) => {
-  return /* @__PURE__ */ jsx(
-    ToastPrimitives.Root,
-    {
-      ref,
-      className: cn(toastVariants({ variant }), className),
-      ...props
-    }
-  );
-});
-Toast.displayName = ToastPrimitives.Root.displayName;
-const ToastAction = React.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
-  ToastPrimitives.Action,
-  {
-    ref,
-    className: cn(
-      "inline-flex h-8 shrink-0 items-center justify-center rounded-md border bg-transparent px-3 text-sm font-medium ring-offset-background transition-colors hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 group-[.destructive]:border-muted/40 group-[.destructive]:hover:border-destructive/30 group-[.destructive]:hover:bg-destructive group-[.destructive]:hover:text-destructive-foreground group-[.destructive]:focus:ring-destructive",
-      className
-    ),
-    ...props
-  }
-));
-ToastAction.displayName = ToastPrimitives.Action.displayName;
-const ToastClose = React.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
-  ToastPrimitives.Close,
-  {
-    ref,
-    className: cn(
-      "absolute right-2 top-2 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100 group-[.destructive]:text-red-300 group-[.destructive]:hover:text-red-50 group-[.destructive]:focus:ring-red-400 group-[.destructive]:focus:ring-offset-red-600",
-      className
-    ),
-    "toast-close": "",
-    ...props,
-    children: /* @__PURE__ */ jsx(X, { className: "h-4 w-4" })
-  }
-));
-ToastClose.displayName = ToastPrimitives.Close.displayName;
-const ToastTitle = React.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
-  ToastPrimitives.Title,
-  {
-    ref,
-    className: cn("text-sm font-semibold", className),
-    ...props
-  }
-));
-ToastTitle.displayName = ToastPrimitives.Title.displayName;
-const ToastDescription = React.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
-  ToastPrimitives.Description,
-  {
-    ref,
-    className: cn("text-sm opacity-90", className),
-    ...props
-  }
-));
-ToastDescription.displayName = ToastPrimitives.Description.displayName;
-function Toaster$1() {
-  const { toasts } = useToast();
-  return /* @__PURE__ */ jsxs(ToastProvider, { children: [
-    toasts.map(function({ id, title, description, action, ...props }) {
-      return /* @__PURE__ */ jsxs(Toast, { ...props, children: [
-        /* @__PURE__ */ jsxs("div", { className: "grid gap-1", children: [
-          title && /* @__PURE__ */ jsx(ToastTitle, { children: title }),
-          description && /* @__PURE__ */ jsx(ToastDescription, { children: description })
-        ] }),
-        action,
-        /* @__PURE__ */ jsx(ToastClose, {})
-      ] }, id);
-    }),
-    /* @__PURE__ */ jsx(ToastViewport, {})
-  ] });
-}
-const Toaster = ({ ...props }) => {
-  const { theme = "system" } = useTheme();
-  return /* @__PURE__ */ jsx(
-    Toaster$2,
-    {
-      theme,
-      className: "toaster group",
-      toastOptions: {
-        classNames: {
-          toast: "group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg",
-          description: "group-[.toast]:text-muted-foreground",
-          actionButton: "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground",
-          cancelButton: "group-[.toast]:bg-muted group-[.toast]:text-muted-foreground"
-        }
-      },
-      ...props
-    }
-  );
-};
-const TooltipProvider = TooltipPrimitive.Provider;
-const Tooltip = TooltipPrimitive.Root;
-const TooltipTrigger = TooltipPrimitive.Trigger;
-const TooltipContent = React.forwardRef(({ className, sideOffset = 4, ...props }, ref) => /* @__PURE__ */ jsx(TooltipPrimitive.Portal, { children: /* @__PURE__ */ jsx(
-  TooltipPrimitive.Content,
-  {
-    ref,
-    sideOffset,
-    className: cn(
-      "z-[9999] overflow-hidden rounded-md border bg-popover px-3 py-1.5 text-sm text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
-      className
-    ),
-    ...props
-  }
-) }));
-TooltipContent.displayName = TooltipPrimitive.Content.displayName;
 var TAG_NAMES = /* @__PURE__ */ ((TAG_NAMES2) => {
   TAG_NAMES2["BASE"] = "base";
   TAG_NAMES2["BODY"] = "body";
@@ -1084,6 +832,258 @@ var Helmet = (_b = class extends Component {
   encodeSpecialCharacters: true,
   prioritizeSeoTags: false
 }), _b);
+const TOAST_LIMIT = 1;
+const TOAST_REMOVE_DELAY = 1e6;
+let count = 0;
+function genId() {
+  count = (count + 1) % Number.MAX_SAFE_INTEGER;
+  return count.toString();
+}
+const toastTimeouts = /* @__PURE__ */ new Map();
+const addToRemoveQueue = (toastId) => {
+  if (toastTimeouts.has(toastId)) {
+    return;
+  }
+  const timeout = setTimeout(() => {
+    toastTimeouts.delete(toastId);
+    dispatch({
+      type: "REMOVE_TOAST",
+      toastId
+    });
+  }, TOAST_REMOVE_DELAY);
+  toastTimeouts.set(toastId, timeout);
+};
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "ADD_TOAST":
+      return {
+        ...state,
+        toasts: [action.toast, ...state.toasts].slice(0, TOAST_LIMIT)
+      };
+    case "UPDATE_TOAST":
+      return {
+        ...state,
+        toasts: state.toasts.map(
+          (t) => t.id === action.toast.id ? { ...t, ...action.toast } : t
+        )
+      };
+    case "DISMISS_TOAST": {
+      const { toastId } = action;
+      if (toastId) {
+        addToRemoveQueue(toastId);
+      } else {
+        state.toasts.forEach((toast2) => {
+          addToRemoveQueue(toast2.id);
+        });
+      }
+      return {
+        ...state,
+        toasts: state.toasts.map(
+          (t) => t.id === toastId || toastId === void 0 ? {
+            ...t,
+            open: false
+          } : t
+        )
+      };
+    }
+    case "REMOVE_TOAST":
+      if (action.toastId === void 0) {
+        return {
+          ...state,
+          toasts: []
+        };
+      }
+      return {
+        ...state,
+        toasts: state.toasts.filter((t) => t.id !== action.toastId)
+      };
+  }
+};
+const listeners = [];
+let memoryState = { toasts: [] };
+function dispatch(action) {
+  memoryState = reducer(memoryState, action);
+  listeners.forEach((listener) => {
+    listener(memoryState);
+  });
+}
+function toast({ ...props }) {
+  const id = genId();
+  const update = (props2) => dispatch({
+    type: "UPDATE_TOAST",
+    toast: { ...props2, id }
+  });
+  const dismiss = () => dispatch({ type: "DISMISS_TOAST", toastId: id });
+  dispatch({
+    type: "ADD_TOAST",
+    toast: {
+      ...props,
+      id,
+      open: true,
+      onOpenChange: (open) => {
+        if (!open) dismiss();
+      }
+    }
+  });
+  return {
+    id,
+    dismiss,
+    update
+  };
+}
+function useToast() {
+  const [state, setState] = React.useState(memoryState);
+  React.useEffect(() => {
+    listeners.push(setState);
+    return () => {
+      const index = listeners.indexOf(setState);
+      if (index > -1) {
+        listeners.splice(index, 1);
+      }
+    };
+  }, [state]);
+  return {
+    ...state,
+    toast,
+    dismiss: (toastId) => dispatch({ type: "DISMISS_TOAST", toastId })
+  };
+}
+function cn(...inputs) {
+  return twMerge(clsx(inputs));
+}
+const ToastProvider = ToastPrimitives.Provider;
+const ToastViewport = React.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+  ToastPrimitives.Viewport,
+  {
+    ref,
+    className: cn(
+      "fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]",
+      className
+    ),
+    ...props
+  }
+));
+ToastViewport.displayName = ToastPrimitives.Viewport.displayName;
+const toastVariants = cva(
+  "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full",
+  {
+    variants: {
+      variant: {
+        default: "border bg-background text-foreground",
+        destructive: "destructive group border-destructive bg-destructive text-destructive-foreground"
+      }
+    },
+    defaultVariants: {
+      variant: "default"
+    }
+  }
+);
+const Toast = React.forwardRef(({ className, variant, ...props }, ref) => {
+  return /* @__PURE__ */ jsx(
+    ToastPrimitives.Root,
+    {
+      ref,
+      className: cn(toastVariants({ variant }), className),
+      ...props
+    }
+  );
+});
+Toast.displayName = ToastPrimitives.Root.displayName;
+const ToastAction = React.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+  ToastPrimitives.Action,
+  {
+    ref,
+    className: cn(
+      "inline-flex h-8 shrink-0 items-center justify-center rounded-md border bg-transparent px-3 text-sm font-medium ring-offset-background transition-colors hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 group-[.destructive]:border-muted/40 group-[.destructive]:hover:border-destructive/30 group-[.destructive]:hover:bg-destructive group-[.destructive]:hover:text-destructive-foreground group-[.destructive]:focus:ring-destructive",
+      className
+    ),
+    ...props
+  }
+));
+ToastAction.displayName = ToastPrimitives.Action.displayName;
+const ToastClose = React.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+  ToastPrimitives.Close,
+  {
+    ref,
+    className: cn(
+      "absolute right-2 top-2 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100 group-[.destructive]:text-red-300 group-[.destructive]:hover:text-red-50 group-[.destructive]:focus:ring-red-400 group-[.destructive]:focus:ring-offset-red-600",
+      className
+    ),
+    "toast-close": "",
+    ...props,
+    children: /* @__PURE__ */ jsx(X, { className: "h-4 w-4" })
+  }
+));
+ToastClose.displayName = ToastPrimitives.Close.displayName;
+const ToastTitle = React.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+  ToastPrimitives.Title,
+  {
+    ref,
+    className: cn("text-sm font-semibold", className),
+    ...props
+  }
+));
+ToastTitle.displayName = ToastPrimitives.Title.displayName;
+const ToastDescription = React.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+  ToastPrimitives.Description,
+  {
+    ref,
+    className: cn("text-sm opacity-90", className),
+    ...props
+  }
+));
+ToastDescription.displayName = ToastPrimitives.Description.displayName;
+function Toaster$1() {
+  const { toasts } = useToast();
+  return /* @__PURE__ */ jsxs(ToastProvider, { children: [
+    toasts.map(function({ id, title, description, action, ...props }) {
+      return /* @__PURE__ */ jsxs(Toast, { ...props, children: [
+        /* @__PURE__ */ jsxs("div", { className: "grid gap-1", children: [
+          title && /* @__PURE__ */ jsx(ToastTitle, { children: title }),
+          description && /* @__PURE__ */ jsx(ToastDescription, { children: description })
+        ] }),
+        action,
+        /* @__PURE__ */ jsx(ToastClose, {})
+      ] }, id);
+    }),
+    /* @__PURE__ */ jsx(ToastViewport, {})
+  ] });
+}
+const Toaster = ({ ...props }) => {
+  const { theme = "system" } = useTheme();
+  return /* @__PURE__ */ jsx(
+    Toaster$2,
+    {
+      theme,
+      className: "toaster group",
+      toastOptions: {
+        classNames: {
+          toast: "group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg",
+          description: "group-[.toast]:text-muted-foreground",
+          actionButton: "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground",
+          cancelButton: "group-[.toast]:bg-muted group-[.toast]:text-muted-foreground"
+        }
+      },
+      ...props
+    }
+  );
+};
+const TooltipProvider = TooltipPrimitive.Provider;
+const Tooltip = TooltipPrimitive.Root;
+const TooltipTrigger = TooltipPrimitive.Trigger;
+const TooltipContent = React.forwardRef(({ className, sideOffset = 4, ...props }, ref) => /* @__PURE__ */ jsx(TooltipPrimitive.Portal, { children: /* @__PURE__ */ jsx(
+  TooltipPrimitive.Content,
+  {
+    ref,
+    sideOffset,
+    className: cn(
+      "z-[9999] overflow-hidden rounded-md border bg-popover px-3 py-1.5 text-sm text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+      className
+    ),
+    ...props
+  }
+) }));
+TooltipContent.displayName = TooltipPrimitive.Content.displayName;
 const SUPABASE_URL = "https://qsrkzgywbcbfnmailmsp.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFzcmt6Z3l3YmNiZm5tYWlsbXNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM1MzQ5OTcsImV4cCI6MjA1OTExMDk5N30.uqh8KDM_ks2lzo9Go-0ffCh2CFIURhQRb9qD84i6pQ0";
 const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
@@ -1615,7 +1615,7 @@ const PROVIDER_CONFIGS = {
     bgColor: "bg-purple-50",
     borderColor: "border-purple-200",
     textColor: "text-purple-700",
-    logo: "images/998b5116-3761-4842-9a89-628f8e71c362.png",
+    logo: "/images/998b5116-3761-4842-9a89-628f8e71c362.png",
     logoAspectRatio: "square",
     logoBackground: "white"
   },
@@ -1628,7 +1628,7 @@ const PROVIDER_CONFIGS = {
     bgColor: "bg-blue-50",
     borderColor: "border-blue-200",
     textColor: "text-blue-700",
-    logo: "images/df4efff1-2943-40f6-9a23-fc3f872ee338.png",
+    logo: "/images/df4efff1-2943-40f6-9a23-fc3f872ee338.png",
     logoAspectRatio: "wide",
     logoBackground: "transparent"
   },
@@ -1641,7 +1641,7 @@ const PROVIDER_CONFIGS = {
     bgColor: "bg-green-50",
     borderColor: "border-green-200",
     textColor: "text-green-700",
-    logo: "images/ccc8c7f7-53cc-41ac-8e6d-0fe13f968fd3.png",
+    logo: "/images/ccc8c7f7-53cc-41ac-8e6d-0fe13f968fd3.png",
     logoAspectRatio: "wide",
     logoBackground: "dark"
   },
@@ -1654,7 +1654,7 @@ const PROVIDER_CONFIGS = {
     bgColor: "bg-amber-50",
     borderColor: "border-amber-200",
     textColor: "text-amber-700",
-    logo: "images/f983540a-2e1c-47e7-bac5-99c00df75346.png",
+    logo: "/images/f983540a-2e1c-47e7-bac5-99c00df75346.png",
     logoAspectRatio: "square",
     logoBackground: "transparent"
   }
@@ -1880,7 +1880,7 @@ const BoxCard = React__default.memo(({ box, index, isVisible }) => {
                     providerId: provider,
                     size: "lg",
                     enhanced: true,
-                    className: "hover:scale-105 transition-transform duration-200"
+                    className: "hover:scale-[1.02] transition-transform duration-200"
                   }
                 ) }) }),
                 /* @__PURE__ */ jsx(TooltipContent, { children: /* @__PURE__ */ jsx("p", { children: ((_a2 = PROVIDER_CONFIGS[provider]) == null ? void 0 : _a2.displayName) || provider }) })
@@ -2330,10 +2330,21 @@ const ScrollableContainer = ({
       {
         ref: scrollRef,
         className: cn(
-          "overflow-y-auto scrollbar-webkit scroll-shadow-inset",
+          "overflow-y-auto overflow-x-visible scrollbar-webkit",
           maxHeight,
           className
         ),
+        style: {
+          overflowClipMargin: "10px",
+          paddingLeft: "8px",
+          paddingRight: "8px",
+          paddingTop: "8px",
+          paddingBottom: "8px",
+          marginLeft: "-8px",
+          marginRight: "-8px",
+          marginTop: "-8px",
+          marginBottom: "-8px"
+        },
         children
       }
     ),
@@ -6163,7 +6174,7 @@ const CategoryStatsCard = ({ stats, title, type }) => {
   const categoryLabel = type === "jackpot" ? "Jackpot Items" : "Common Items";
   return /* @__PURE__ */ jsx(Card, { className: `
       bg-white/20 backdrop-blur-md border mb-3 rounded-xl shadow-lg isolate
-      transition-all duration-300 hover:scale-105 hover:bg-white/30 motion-reduce:hover:scale-100
+      transition-all duration-300 hover:scale-[1.02] hover:bg-white/30 motion-reduce:hover:scale-100
       ${getCardGlow(type)}
       glass-edge
     `, children: /* @__PURE__ */ jsxs(CardContent, { className: "p-3", children: [
@@ -6268,13 +6279,19 @@ const BoxDetailContent = ({ box }) => {
       return b.value - a.value;
     });
   }, [box.all_items]);
+  const topJackpotItems = useMemo(() => {
+    return [...box.all_items].sort((a, b) => a.drop_chance - b.drop_chance).slice(0, 3);
+  }, [box.all_items]);
+  const topCommonItems = useMemo(() => {
+    return [...box.all_items].sort((a, b) => b.drop_chance - a.drop_chance).slice(0, 3);
+  }, [box.all_items]);
   const jackpotStats = useMemo(
-    () => calculateCategoryStats(box.jackpot_items, box.box_price),
-    [box.jackpot_items, box.box_price]
+    () => calculateCategoryStats(topJackpotItems, box.box_price),
+    [topJackpotItems, box.box_price]
   );
   const commonStats = useMemo(
-    () => calculateCategoryStats(box.unwanted_items, box.box_price),
-    [box.unwanted_items, box.box_price]
+    () => calculateCategoryStats(topCommonItems, box.box_price),
+    [topCommonItems, box.box_price]
   );
   const lossChance = useMemo(
     () => calculateLossChance(box.all_items, box.box_price),
@@ -6311,11 +6328,11 @@ const BoxDetailContent = ({ box }) => {
         /* @__PURE__ */ jsxs(
           "div",
           {
-            className: `w-full ${isMobile ? "h-48" : "h-64"} rounded-xl overflow-hidden p-4 shadow-lg border border-purple-200 relative cursor-pointer transition-transform duration-300 hover:scale-105`,
+            className: `w-full ${isMobile ? "h-48" : "h-64"} rounded-xl overflow-hidden p-4 shadow-lg border border-purple-200 relative cursor-pointer`,
             style: {
               backgroundImage: `url('images/90a8beae-8a8c-4f9a-bfd2-d7dc5be9de82.png')`,
               backgroundSize: "cover",
-              backgroundRepeat: "no-repeat",
+              backgroundRepeat: "no-referrer",
               backgroundPosition: "center",
               backgroundBlendMode: "soft-light"
             },
@@ -6327,7 +6344,7 @@ const BoxDetailContent = ({ box }) => {
                 {
                   src: box.box_image,
                   alt: box.box_name,
-                  className: `w-full h-full object-contain relative z-10 transition-all duration-300 ${imageLoaded ? "opacity-100" : "opacity-0"}`,
+                  className: `w-full h-full object-contain relative z-10 transition-transform duration-300 hover:scale-[1.02] transform-origin-center overflow-visible cursor-default ${imageLoaded ? "opacity-100" : "opacity-0"}`,
                   referrerPolicy: "no-referrer",
                   onLoad: () => setImageLoaded(true)
                 }
@@ -6435,7 +6452,9 @@ const BoxDetailContent = ({ box }) => {
                 sortedAllItems.slice(0, 50).map((item, i) => /* @__PURE__ */ jsxs(
                   "div",
                   {
-                    className: `flex items-center gap-2 ${isMobile ? "p-2" : "p-2"} bg-purple-50 rounded border border-purple-200 ${isMobile ? "text-xs" : "text-sm"} ${isMobile ? "min-h-[44px]" : ""} transition-transform duration-200 hover:scale-[1.02] cursor-pointer`,
+                    className: `flex items-center gap-2 p-2 bg-purple-50 rounded border border-purple-200
+                                  ${isMobile ? "text-xs min-h-[44px] hover:scale-[1.02]" : "text-sm hover:scale-[1.03]"}
+                                  transition-transform origin-center relative z-10 overflow-visible cursor-pointer`,
                     children: [
                       /* @__PURE__ */ jsx("div", { className: "flex-1 min-w-0", children: /* @__PURE__ */ jsx("div", { className: `font-medium truncate text-gray-800 ${isMobile ? "text-xs" : ""}`, children: item.name }) }),
                       /* @__PURE__ */ jsx("div", { className: `text-purple-600 font-mono ${isMobile ? "text-xs" : "text-xs"}`, children: formatDropRate(item.drop_chance) }),
@@ -6475,12 +6494,15 @@ const BoxDetailContent = ({ box }) => {
           /* @__PURE__ */ jsx(
             ScrollableContainer,
             {
-              maxHeight: isMobile ? "max-h-48" : "max-h-60",
+              maxHeight: topJackpotItems.length <= 3 ? "max-h-none" : isMobile ? "max-h-48" : "max-h-60",
               className: "space-y-2",
-              children: box.jackpot_items && box.jackpot_items.length > 0 ? box.jackpot_items.slice(0, 20).map((item, i) => /* @__PURE__ */ jsxs(
+              showIndicators: topJackpotItems.length > 3,
+              children: topJackpotItems && topJackpotItems.length > 0 ? topJackpotItems.map((item, i) => /* @__PURE__ */ jsxs(
                 "div",
                 {
-                  className: `flex items-center gap-2 p-2 bg-purple-50 rounded border border-purple-200 ${isMobile ? "min-h-[44px]" : ""} transition-transform duration-200 hover:scale-[1.02] cursor-pointer`,
+                  className: `flex items-center gap-2 p-2 bg-purple-50 rounded border border-purple-200
+                                  ${isMobile ? "min-h-[44px] hover:scale-[1.02]" : "hover:scale-[1.03]"}
+                                  transition-transform origin-center relative z-10 overflow-visible cursor-pointer`,
                   children: [
                     /* @__PURE__ */ jsx("div", { className: `${isMobile ? "w-10 h-10" : "w-12 h-12"} bg-purple-100 rounded flex items-center justify-center flex-shrink-0 p-1`, children: item.image ? /* @__PURE__ */ jsx(
                       "img",
@@ -6527,12 +6549,15 @@ const BoxDetailContent = ({ box }) => {
           /* @__PURE__ */ jsx(
             ScrollableContainer,
             {
-              maxHeight: isMobile ? "max-h-48" : "max-h-60",
+              maxHeight: topCommonItems.length <= 3 ? "max-h-none" : isMobile ? "max-h-48" : "max-h-60",
               className: "space-y-2",
-              children: box.unwanted_items && box.unwanted_items.length > 0 ? box.unwanted_items.slice(0, 20).map((item, i) => /* @__PURE__ */ jsxs(
+              showIndicators: topCommonItems.length > 3,
+              children: topCommonItems && topCommonItems.length > 0 ? topCommonItems.map((item, i) => /* @__PURE__ */ jsxs(
                 "div",
                 {
-                  className: `flex items-center gap-2 p-2 bg-red-50 rounded border border-red-200 ${isMobile ? "min-h-[44px]" : ""} transition-transform duration-200 hover:scale-[1.02] cursor-pointer`,
+                  className: `flex items-center gap-2 p-2 bg-red-50 rounded border border-red-200
+                                  ${isMobile ? "min-h-[44px] hover:scale-[1.02]" : "hover:scale-[1.03]"}
+                                  transition-transform origin-center relative z-10 overflow-visible cursor-pointer`,
                   children: [
                     /* @__PURE__ */ jsx("div", { className: `${isMobile ? "w-10 h-10" : "w-12 h-12"} bg-red-100 rounded flex items-center justify-center flex-shrink-0 p-1`, children: item.image ? /* @__PURE__ */ jsx(
                       "img",
@@ -6606,6 +6631,106 @@ const ProviderBreadcrumb = ({
       /* @__PURE__ */ jsx("span", { className: "font-bold text-gray-900 text-lg max-w-[300px] truncate", children: boxName })
     ] })
   ] });
+};
+const SEODebugInfo = ({ boxData }) => {
+  var _a2, _b2;
+  const location = useLocation();
+  const [showDebug, setShowDebug] = useState(false);
+  if (!showDebug) {
+    return /* @__PURE__ */ jsx("div", { className: "fixed bottom-4 right-4 z-50", children: /* @__PURE__ */ jsx(
+      Button,
+      {
+        variant: "outline",
+        size: "sm",
+        onClick: () => setShowDebug(true),
+        className: "bg-background/80 backdrop-blur-sm",
+        children: "SEO Debug"
+      }
+    ) });
+  }
+  const canonicalUrl = `https://unpacked.gg${location.pathname}`;
+  const imageUrl = (boxData == null ? void 0 : boxData.box_image) || "https://unpacked.gg/lovable-uploads/f14c9719-6782-47d8-aa50-806e5c2431b6.png";
+  const title = boxData ? `${boxData.box_name} - Mystery Box Analysis | Unpacked.gg` : "Unpacked.gg - Online Mystery Boxes - Find Yours";
+  const description = boxData ? `Analyze ${boxData.box_name} mystery box with ${(_a2 = boxData.expected_value_percent) == null ? void 0 : _a2.toFixed(1)}% expected value. Check drop rates, volatility, and profitability analysis.` : "Unbox the Best Mystery Boxes – Don't Settle for Poor Drop Rates. Analyze expected values, drop rates, and volatility across multiple providers.";
+  const socialUrls = {
+    facebook: `https://developers.facebook.com/tools/debug/sharing/?q=${encodeURIComponent(canonicalUrl)}`,
+    twitter: `https://cards-dev.twitter.com/validator?url=${encodeURIComponent(canonicalUrl)}`,
+    linkedin: `https://www.linkedin.com/post-inspector/inspect/${encodeURIComponent(canonicalUrl)}`,
+    whatsapp: `https://wa.me/?text=${encodeURIComponent(canonicalUrl)}`
+  };
+  return /* @__PURE__ */ jsx("div", { className: "fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4", children: /* @__PURE__ */ jsxs(Card, { className: "max-w-2xl max-h-[90vh] overflow-auto w-full", children: [
+    /* @__PURE__ */ jsxs(CardHeader, { className: "flex flex-row items-center justify-between", children: [
+      /* @__PURE__ */ jsx(CardTitle, { children: "SEO Debug Information" }),
+      /* @__PURE__ */ jsx(Button, { variant: "ghost", size: "sm", onClick: () => setShowDebug(false), children: "✕" })
+    ] }),
+    /* @__PURE__ */ jsxs(CardContent, { className: "space-y-4", children: [
+      /* @__PURE__ */ jsxs("div", { children: [
+        /* @__PURE__ */ jsx("h3", { className: "font-semibold mb-2", children: "Meta Tags" }),
+        /* @__PURE__ */ jsxs("div", { className: "space-y-2 text-sm font-mono bg-muted p-3 rounded", children: [
+          /* @__PURE__ */ jsxs("div", { children: [
+            /* @__PURE__ */ jsx("strong", { children: "Title:" }),
+            " ",
+            title
+          ] }),
+          /* @__PURE__ */ jsxs("div", { children: [
+            /* @__PURE__ */ jsx("strong", { children: "Description:" }),
+            " ",
+            description
+          ] }),
+          /* @__PURE__ */ jsxs("div", { children: [
+            /* @__PURE__ */ jsx("strong", { children: "Image:" }),
+            " ",
+            imageUrl
+          ] }),
+          /* @__PURE__ */ jsxs("div", { children: [
+            /* @__PURE__ */ jsx("strong", { children: "URL:" }),
+            " ",
+            canonicalUrl
+          ] })
+        ] })
+      ] }),
+      /* @__PURE__ */ jsxs("div", { children: [
+        /* @__PURE__ */ jsx("h3", { className: "font-semibold mb-2", children: "Preview Test Tools" }),
+        /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 gap-2", children: Object.entries(socialUrls).map(([platform, url]) => /* @__PURE__ */ jsxs(
+          Button,
+          {
+            variant: "outline",
+            size: "sm",
+            onClick: () => window.open(url, "_blank"),
+            className: "capitalize",
+            children: [
+              "Test ",
+              platform
+            ]
+          },
+          platform
+        )) })
+      ] }),
+      boxData && /* @__PURE__ */ jsxs("div", { children: [
+        /* @__PURE__ */ jsx("h3", { className: "font-semibold mb-2", children: "Box Data" }),
+        /* @__PURE__ */ jsxs("div", { className: "text-sm bg-muted p-3 rounded", children: [
+          /* @__PURE__ */ jsxs("div", { children: [
+            "Name: ",
+            boxData.box_name
+          ] }),
+          /* @__PURE__ */ jsxs("div", { children: [
+            "EV: ",
+            (_b2 = boxData.expected_value_percent) == null ? void 0 : _b2.toFixed(1),
+            "%"
+          ] }),
+          /* @__PURE__ */ jsxs("div", { children: [
+            "Price: $",
+            boxData.box_price
+          ] }),
+          /* @__PURE__ */ jsxs("div", { children: [
+            "Provider: ",
+            boxData.data_source
+          ] })
+        ] })
+      ] }),
+      /* @__PURE__ */ jsx("div", { className: "text-xs text-muted-foreground", children: "Note: Social media platforms may cache preview data. Use the test tools above to refresh cache." })
+    ] })
+  ] }) });
 };
 const BoxDetailSkeleton = () => /* @__PURE__ */ jsxs("div", { className: "container mx-auto px-4 py-6 max-w-7xl", children: [
   /* @__PURE__ */ jsxs("div", { className: "mb-6 flex items-center gap-4", children: [
@@ -6814,7 +6939,8 @@ const BoxDetail = () => {
           }
         )
       ] }),
-      /* @__PURE__ */ jsx(BoxDetailContent, { box: boxData })
+      /* @__PURE__ */ jsx(BoxDetailContent, { box: boxData }),
+      /* @__PURE__ */ jsx(SEODebugInfo, { boxData })
     ] }) })
   ] });
 };
@@ -6953,11 +7079,40 @@ const App = () => /* @__PURE__ */ jsx(QueryClientProvider, { client: queryClient
     /* @__PURE__ */ jsx(Route, { path: "*", element: /* @__PURE__ */ jsx(NotFound, {}) })
   ] })
 ] }) }) });
-function render(url) {
+function render(url, boxData) {
+  var _a2;
+  const helmetContext = {};
   const html = ReactDOMServer.renderToString(
-    /* @__PURE__ */ jsx(MemoryRouter, { initialEntries: [url], children: /* @__PURE__ */ jsx(App, {}) })
+    /* @__PURE__ */ jsx(HelmetProvider, { context: helmetContext, children: /* @__PURE__ */ jsx(MemoryRouter, { initialEntries: [url], children: /* @__PURE__ */ jsx(App, {}) }) })
   );
-  return html;
+  const { helmet } = helmetContext;
+  let metaTags = "";
+  if (url.includes("/hub/box/") && boxData) {
+    const canonicalUrl = `https://unpacked.gg${url}`;
+    const imageUrl = boxData.box_image || "https://unpacked.gg/lovable-uploads/f14c9719-6782-47d8-aa50-806e5c2431b6.png";
+    const title = `${boxData.box_name} - Mystery Box Analysis | Unpacked.gg`;
+    const description = `Analyze ${boxData.box_name} mystery box with ${(_a2 = boxData.expected_value_percent) == null ? void 0 : _a2.toFixed(1)}% expected value. Check drop rates, volatility, and profitability analysis.`;
+    metaTags = `
+    <title>${title}</title>
+    <meta name="description" content="${description}" />
+    <meta property="og:title" content="${title}" />
+    <meta property="og:description" content="${description}" />
+    <meta property="og:image" content="${imageUrl}" />
+    <meta property="og:url" content="${canonicalUrl}" />
+    <meta name="twitter:title" content="${title}" />
+    <meta name="twitter:description" content="${description}" />
+    <meta name="twitter:image" content="${imageUrl}" />
+    <link rel="canonical" href="${canonicalUrl}" />`;
+  }
+  return {
+    html,
+    metaTags,
+    helmet: helmet ? {
+      title: helmet.title.toString(),
+      meta: helmet.meta.toString(),
+      link: helmet.link.toString()
+    } : null
+  };
 }
 export {
   render
