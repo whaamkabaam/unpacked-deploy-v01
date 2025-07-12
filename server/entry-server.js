@@ -6987,8 +6987,10 @@ function render(url, boxData) {
   const { helmet } = helmetContext;
   let metaTags = "";
   if (url.includes("/hub/box/") && boxData) {
-    const canonicalUrl = `https://unpacked.gg${url}`;
-    const imageUrl = "https://unpacked.gg/hub/images/f14c9719-6782-47d8-aa50-806e5c2431b6.png";
+    const isDev = process.env.NODE_ENV === "development" || process.env.VITE_DEV_MODE === "true" || url.includes("cloudwaysapps.com");
+    const baseUrl = isDev ? "https://wordpress-1472941-5579290.cloudwaysapps.com" : "https://unpacked.gg";
+    const canonicalUrl = `${baseUrl}${url}`;
+    const imageUrl = `${baseUrl}/hub/images/f14c9719-6782-47d8-aa50-806e5c2431b6.png`;
     const providerDisplay = ((_a2 = PROVIDER_CONFIGS$1[boxData.provider]) == null ? void 0 : _a2.displayName) || boxData.provider;
     const title = `${boxData.box_name} (${providerDisplay}) | Unpacked.gg`;
     const description = `${((_b2 = boxData.expected_value_percent) == null ? void 0 : _b2.toFixed(1)) || "?"}% EV • ${providerDisplay} mystery box analysis with detailed drop rates & profitability.`;
