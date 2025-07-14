@@ -5787,19 +5787,19 @@ const Hub = () => {
       ] }) }),
       /* @__PURE__ */ jsx("main", { className: "p-6 md:p-8", children: /* @__PURE__ */ jsxs("div", { className: "max-w-7xl mx-auto space-y-12 md:space-y-16", children: [
         /* @__PURE__ */ jsxs("header", { className: "text-center space-y-6", children: [
-          /* @__PURE__ */ jsxs("div", { className: `flex items-center justify-center ${isMobile ? "gap-2" : "gap-4"}`, children: [
+          /* @__PURE__ */ jsxs("div", { className: `flex items-center justify-center ${isMobile ? "gap-3" : "gap-6"}`, children: [
             /* @__PURE__ */ jsx(
               "img",
               {
                 src: "images/208a85a9-4108-4646-8cb0-aed2a05655ab.png",
                 alt: "Unpacked.gg Mystery Box Analytics Platform Logo",
-                className: `object-contain ${isMobile ? "h-20" : "h-32"}`,
-                width: isMobile ? 80 : 128,
-                height: isMobile ? 80 : 128
+                className: `object-contain ${isMobile ? "h-32" : "h-48"}`,
+                width: isMobile ? 128 : 192,
+                height: isMobile ? 128 : 192
               }
             ),
-            /* @__PURE__ */ jsx("div", { className: `${isMobile ? "w-2" : "w-0.5"} bg-black ${isMobile ? "h-12" : "h-16"} shadow-[0_0_4px_rgba(255,255,255,0.8)]`, "aria-hidden": "true" }),
-            /* @__PURE__ */ jsx("span", { className: `font-bold text-gray-800 ${isMobile ? "text-xl" : "text-3xl"}`, "aria-label": "Hub section", children: "Hub" })
+            /* @__PURE__ */ jsx("div", { className: `${isMobile ? "w-3" : "w-1"} bg-black ${isMobile ? "h-20" : "h-32"} shadow-[0_0_4px_rgba(255,255,255,0.8)]`, "aria-hidden": "true" }),
+            /* @__PURE__ */ jsx("span", { className: `font-bold text-gray-800 ${isMobile ? "text-3xl" : "text-5xl"}`, "aria-label": "Hub section", children: "Hub" })
           ] }),
           /* @__PURE__ */ jsxs("div", { className: "space-y-6", children: [
             /* @__PURE__ */ jsx("div", { className: "py-4", children: /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-600 to-purple-700 bg-clip-text text-transparent leading-[1.2] pb-2", children: "Online Mystery Boxes – Find Yours" }) }),
