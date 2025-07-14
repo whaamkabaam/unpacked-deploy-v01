@@ -3619,7 +3619,7 @@ const MobileFilterChips = ({
     const config = PROVIDER_CONFIGS[providerId];
     if (config) {
       chips.push({
-        type: "providers",
+        type: "provider",
         label: config.displayName,
         value: providerId,
         providerId
@@ -3628,21 +3628,21 @@ const MobileFilterChips = ({
   });
   filters.categories.forEach((category) => {
     chips.push({
-      type: "categories",
+      type: "category",
       label: capitalizeFirstLetter$2(category),
       value: category
     });
   });
   filters.tags.forEach((tag) => {
     chips.push({
-      type: "tags",
+      type: "tag",
       label: `#${capitalizeFirstLetter$2(tag)}`,
       value: tag
     });
   });
   filters.volatilityBuckets.forEach((bucket) => {
     chips.push({
-      type: "volatilityBuckets",
+      type: "volatilityBucket",
       label: `${bucket} Vol.`,
       value: bucket
     });
@@ -3731,21 +3731,21 @@ const FilterChips = ({
   const chips = [];
   filters.categories.forEach((category) => {
     chips.push({
-      type: "categories",
+      type: "category",
       label: capitalizeFirstLetter$1(category),
       value: category
     });
   });
   filters.tags.forEach((tag) => {
     chips.push({
-      type: "tags",
+      type: "tag",
       label: `#${capitalizeFirstLetter$1(tag)}`,
       value: tag
     });
   });
   filters.volatilityBuckets.forEach((bucket) => {
     chips.push({
-      type: "volatilityBuckets",
+      type: "volatilityBucket",
       label: `${bucket} Volatility`,
       value: bucket
     });
@@ -5756,10 +5756,10 @@ const Hub = () => {
       ] }) }),
       /* @__PURE__ */ jsx("div", { className: "p-6 md:p-8", children: /* @__PURE__ */ jsxs("div", { className: "max-w-7xl mx-auto space-y-12 md:space-y-16", children: [
         /* @__PURE__ */ jsxs("header", { className: "text-center space-y-6", children: [
-          /* @__PURE__ */ jsxs("div", { className: `flex items-center justify-center ${isMobile ? "gap-2" : "gap-4"}`, children: [
-            /* @__PURE__ */ jsx("img", { src: "/images/208a85a9-4108-4646-8cb0-aed2a05655ab.png", alt: "Unpacked.gg Logo", className: `object-contain ${isMobile ? "h-20" : "h-32"}` }),
-            /* @__PURE__ */ jsx("div", { className: `${isMobile ? "w-2" : "w-0.5"} bg-black ${isMobile ? "h-12" : "h-16"} shadow-[0_0_4px_rgba(255,255,255,0.8)]` }),
-            /* @__PURE__ */ jsx("span", { className: `font-bold text-gray-800 ${isMobile ? "text-xl" : "text-3xl"}`, children: "Hub" })
+          /* @__PURE__ */ jsxs("div", { className: `flex items-center justify-center ${isMobile ? "gap-3" : "gap-6"}`, children: [
+            /* @__PURE__ */ jsx("img", { src: "/images/208a85a9-4108-4646-8cb0-aed2a05655ab.png", alt: "Unpacked.gg Logo", className: `object-contain ${isMobile ? "h-32" : "h-48"}` }),
+            /* @__PURE__ */ jsx("div", { className: `${isMobile ? "w-3" : "w-1"} bg-black ${isMobile ? "h-20" : "h-32"} shadow-[0_0_4px_rgba(255,255,255,0.8)]` }),
+            /* @__PURE__ */ jsx("span", { className: `font-bold text-gray-800 ${isMobile ? "text-3xl" : "text-5xl"}`, children: "Hub" })
           ] }),
           /* @__PURE__ */ jsxs("div", { className: "space-y-6", children: [
             /* @__PURE__ */ jsx("div", { className: "py-4", children: /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-600 to-purple-700 bg-clip-text text-transparent leading-[1.2] pb-2", children: "Online Mystery Boxes – Find Yours" }) }),
