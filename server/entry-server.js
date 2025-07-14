@@ -12,7 +12,7 @@ import invariant from "invariant";
 import shallowEqual from "shallowequal";
 import * as ToastPrimitives from "@radix-ui/react-toast";
 import { cva } from "class-variance-authority";
-import { X, ChevronLeft, ChevronRight, Check, Circle, ArrowUpDown, ChevronDown, Search, RotateCcw, Filter, FilterX, BarChart3, Info, Target, DollarSign, Zap, Award, Medal, Trophy, Package, List, ChevronUp, ExternalLink, Star, HelpCircle, AlertTriangle, Home, ArrowLeft } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, Check, Circle, ArrowUpDown, ChevronDown, Search, RotateCcw, Filter, FilterX, BarChart3, Info, Target, DollarSign, Zap, Award, Medal, Trophy, Package, List, ExternalLink, Star, HelpCircle, AlertTriangle, Home, ArrowLeft } from "lucide-react";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { useTheme } from "next-themes";
@@ -5671,86 +5671,6 @@ const useHuntReport = (boxesData, selectedItem) => {
     return generateHuntReport(adaptedBoxes, selectedItem);
   }, [boxesData, selectedItem]);
 };
-const faqs = [
-  {
-    question: "What are mystery boxes and how do they work?",
-    answer: "Mystery boxes are digital containers that contain random items with varying values. You purchase a box for a set price and receive a random item from the box's loot pool. Each item has a specific drop rate that determines how likely you are to receive it."
-  },
-  {
-    question: "How do you calculate expected value (EV) for mystery boxes?",
-    answer: "Expected value is calculated by multiplying each item's value by its drop rate percentage, then summing all results. For example, if a box has a 1% chance for a $100 item and 99% chance for a $1 item, the EV would be (0.01 × $100) + (0.99 × $1) = $1.99."
-  },
-  {
-    question: "Which mystery box providers do you track?",
-    answer: "We track data from major providers including HypeDrop, RillaBox, Cases.gg, and LuxDrop. Our platform aggregates data from these providers to give you comprehensive analytics and comparison tools."
-  },
-  {
-    question: "What does volatility mean in mystery box terms?",
-    answer: "Volatility indicates how much variance there is in potential outcomes. High volatility boxes have big jackpots but mostly low-value items. Low volatility boxes have more consistent returns with smaller gaps between item values."
-  },
-  {
-    question: "Are mystery boxes profitable?",
-    answer: "Most mystery boxes have negative expected value, meaning the average return is less than the box price. However, some boxes may offer positive EV temporarily. Always gamble responsibly and never spend more than you can afford to lose."
-  },
-  {
-    question: "How often is the data updated?",
-    answer: "Our data is updated regularly to reflect current market prices and drop rates. We monitor changes across all tracked providers to ensure our analytics remain accurate and up-to-date."
-  }
-];
-const FAQSection = () => {
-  const [openItems, setOpenItems] = useState(/* @__PURE__ */ new Set());
-  const toggleItem = (index) => {
-    const newOpenItems = new Set(openItems);
-    if (newOpenItems.has(index)) {
-      newOpenItems.delete(index);
-    } else {
-      newOpenItems.add(index);
-    }
-    setOpenItems(newOpenItems);
-  };
-  const faqStructuredData = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": faqs.map((faq) => ({
-      "@type": "Question",
-      "name": faq.question,
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": faq.answer
-      }
-    }))
-  };
-  return /* @__PURE__ */ jsxs("section", { "aria-labelledby": "faq-section", className: "bg-white/30 backdrop-blur-sm rounded-2xl border border-white/40 shadow-xl p-8", children: [
-    /* @__PURE__ */ jsx("script", { type: "application/ld+json", children: JSON.stringify(faqStructuredData) }),
-    /* @__PURE__ */ jsx("h2", { id: "faq-section", className: "text-3xl font-bold text-gray-800 mb-8 text-center", children: "Frequently Asked Questions" }),
-    /* @__PURE__ */ jsx("div", { className: "max-w-4xl mx-auto space-y-4", children: faqs.map((faq, index) => /* @__PURE__ */ jsxs("article", { className: "border border-gray-200 rounded-lg overflow-hidden bg-white/50", children: [
-      /* @__PURE__ */ jsxs(
-        "button",
-        {
-          onClick: () => toggleItem(index),
-          className: "w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50/50 transition-colors",
-          "aria-expanded": openItems.has(index),
-          "aria-controls": `faq-answer-${index}`,
-          children: [
-            /* @__PURE__ */ jsx("h3", { className: "text-lg font-semibold text-gray-800 pr-4", children: faq.question }),
-            openItems.has(index) ? /* @__PURE__ */ jsx(ChevronUp, { className: "h-5 w-5 text-gray-600 flex-shrink-0" }) : /* @__PURE__ */ jsx(ChevronDown, { className: "h-5 w-5 text-gray-600 flex-shrink-0" })
-          ]
-        }
-      ),
-      openItems.has(index) && /* @__PURE__ */ jsx(
-        "div",
-        {
-          id: `faq-answer-${index}`,
-          className: "px-6 pb-4 text-gray-700 leading-relaxed",
-          role: "region",
-          "aria-labelledby": `faq-question-${index}`,
-          children: /* @__PURE__ */ jsx("p", { children: faq.answer })
-        }
-      )
-    ] }, index)) }),
-    /* @__PURE__ */ jsx("div", { className: "mt-8 text-center", children: /* @__PURE__ */ jsx("p", { className: "text-gray-600", children: "Have more questions? Our analytics are designed to help you make informed decisions about mystery box investments." }) })
-  ] });
-};
 const Hub = () => {
   const [searchParams] = useSearchParams();
   const [showAlert, setShowAlert] = useState(true);
@@ -5780,73 +5700,78 @@ const Hub = () => {
         return item.image;
       }
     }
-    return "/placeholder.svg";
+    return "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=300&fit=crop";
   };
-  const websiteStructuredData = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "Unpacked.gg Mystery Box Hub",
-    "url": "https://unpacked.gg/hub",
-    "description": "Compare mystery box drop rates and expected values across multiple providers. Find profitable boxes with detailed analytics.",
-    "publisher": {
-      "@type": "Organization",
-      "name": "Unpacked.gg"
-    },
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": "https://unpacked.gg/hub?search={search_term_string}",
-      "query-input": "required name=search_term_string"
-    }
-  };
-  const breadcrumbStructuredData = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": "https://unpacked.gg"
-      },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "name": "Mystery Box Hub",
-        "item": "https://unpacked.gg/hub"
-      }
-    ]
-  };
+  console.log("Hub component render:", {
+    providerParam,
+    summaryData,
+    boxesCount: boxesData.length,
+    loading,
+    error
+  });
+  if (error) {
+    return /* @__PURE__ */ jsx(DotBackground, { className: "min-h-screen flex items-center justify-center", children: /* @__PURE__ */ jsxs("div", { className: "text-center space-y-4", children: [
+      /* @__PURE__ */ jsxs("div", { className: "text-red-600 text-xl", children: [
+        "Error loading mystery box data: ",
+        error
+      ] }),
+      /* @__PURE__ */ jsx("button", { onClick: () => window.location.reload(), className: "px-4 py-2 bg-gray-200 rounded hover:bg-gray-300", children: "Retry" })
+    ] }) });
+  }
   return /* @__PURE__ */ jsxs(Fragment, { children: [
     /* @__PURE__ */ jsxs(Helmet, { children: [
-      /* @__PURE__ */ jsx("title", { children: "Mystery Box Analytics Hub | Unpacked.gg - Compare Drop Rates & Expected Values" }),
-      /* @__PURE__ */ jsx("meta", { name: "description", content: "Compare mystery box drop rates and expected values across HypeDrop, RillaBox, Cases.gg, and LuxDrop. Find profitable mystery boxes with comprehensive analytics and real-time data." }),
-      /* @__PURE__ */ jsx("meta", { name: "keywords", content: "mystery boxes, drop rates, expected value, hypedrop, rillabox, cases.gg, luxdrop, csgo cases, gambling analytics" }),
+      /* @__PURE__ */ jsx("title", { children: "Mystery Box Hub - Compare Drop Rates & Expected Values | Unpacked.gg" }),
+      /* @__PURE__ */ jsx("meta", { name: "description", content: "Compare mystery box drop rates, expected values, and volatility across RillaBox, Hypedrop, Cases.GG, and Luxdrop. Find the most profitable mystery boxes with comprehensive analytics." }),
+      /* @__PURE__ */ jsx("meta", { name: "keywords", content: "mystery boxes, drop rates, expected value, RillaBox, Hypedrop, Cases.GG, Luxdrop, unboxing, case opening, gambling analytics" }),
       /* @__PURE__ */ jsx("meta", { property: "og:title", content: "Mystery Box Analytics Hub | Unpacked.gg" }),
       /* @__PURE__ */ jsx("meta", { property: "og:description", content: "Find the best mystery boxes with comprehensive drop rate analysis and expected value calculations across multiple providers." }),
       /* @__PURE__ */ jsx("meta", { property: "og:type", content: "website" }),
       /* @__PURE__ */ jsx("meta", { property: "og:url", content: "https://unpacked.gg/hub" }),
-      /* @__PURE__ */ jsx("meta", { property: "og:image", content: "https://unpacked.gg/images/208a85a9-4108-4646-8cb0-aed2a05655ab.png" }),
-      /* @__PURE__ */ jsx("meta", { name: "twitter:card", content: "summary_large_image" }),
       /* @__PURE__ */ jsx("meta", { name: "twitter:title", content: "Mystery Box Analytics Hub | Unpacked.gg" }),
       /* @__PURE__ */ jsx("meta", { name: "twitter:description", content: "Compare mystery box drop rates and expected values across multiple providers. Find profitable boxes with detailed analytics." }),
-      /* @__PURE__ */ jsx("meta", { name: "twitter:image", content: "https://unpacked.gg/images/208a85a9-4108-4646-8cb0-aed2a05655ab.png" }),
       /* @__PURE__ */ jsx("link", { rel: "canonical", href: "https://unpacked.gg/hub" }),
-      /* @__PURE__ */ jsx("script", { type: "application/ld+json", children: JSON.stringify(websiteStructuredData) }),
-      /* @__PURE__ */ jsx("script", { type: "application/ld+json", children: JSON.stringify(breadcrumbStructuredData) }),
       /* @__PURE__ */ jsx("script", { type: "application/ld+json", children: JSON.stringify({
         "@context": "https://schema.org",
-        "@type": "Organization",
+        "@type": "WebApplication",
+        "name": "Mystery Box Analytics Hub",
+        "url": "https://unpacked.gg/hub",
+        "description": "Compare mystery box drop rates, expected values, and volatility across multiple providers. Find profitable boxes with detailed analytics and statistics.",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "All",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "provider": {
+          "@type": "Organization",
+          "name": "Unpacked.gg",
+          "url": "https://unpacked.gg"
+        },
+        "featureList": [
+          "Mystery box drop rate analysis",
+          "Expected value calculations",
+          "Volatility metrics",
+          "Item hunter tool",
+          "Provider comparison",
+          "Real-time statistics"
+        ]
+      }) }),
+      /* @__PURE__ */ jsx("script", { type: "application/ld+json", children: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "WebSite",
         "name": "Unpacked.gg",
         "url": "https://unpacked.gg",
-        "description": "Mystery box analytics platform for comparing drop rates and expected values",
-        "logo": "https://unpacked.gg/images/208a85a9-4108-4646-8cb0-aed2a05655ab.png",
-        "sameAs": []
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://unpacked.gg/hub?search={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
       }) })
     ] }),
     /* @__PURE__ */ jsxs(DotBackground, { className: "min-h-screen", children: [
-      /* @__PURE__ */ jsx("a", { href: "#main-content", className: "sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white px-4 py-2 rounded z-50", children: "Skip to main content" }),
-      showAlert && /* @__PURE__ */ jsx("aside", { className: "mx-4 sm:mx-6 mt-4 sm:mt-6", role: "banner", children: /* @__PURE__ */ jsxs("div", { className: "relative", children: [
-        /* @__PURE__ */ jsxs(Alert, { className: "bg-blue-50 border-blue-200 text-blue-800", children: [
+      showAlert && /* @__PURE__ */ jsx("div", { className: "mx-4 sm:mx-6 mt-4 sm:mt-6", children: /* @__PURE__ */ jsxs("div", { className: "relative", children: [
+        /* @__PURE__ */ jsxs(Alert, { className: "bg-blue-50 border-blue-200 text-blue-800", role: "banner", children: [
           /* @__PURE__ */ jsx(Info, { className: "h-4 w-4 text-blue-600" }),
           /* @__PURE__ */ jsx(AlertDescription, { className: "text-sm leading-relaxed text-blue-800 pr-10", children: "We gather this information and data to the best of our knowledge to provide value, but we cannot guarantee that the data is always accurate." })
         ] }),
@@ -5860,7 +5785,7 @@ const Hub = () => {
           }
         )
       ] }) }),
-      /* @__PURE__ */ jsx("main", { id: "main-content", className: "p-6 md:p-8", children: /* @__PURE__ */ jsxs("div", { className: "max-w-7xl mx-auto space-y-12 md:space-y-16", children: [
+      /* @__PURE__ */ jsx("main", { className: "p-6 md:p-8", children: /* @__PURE__ */ jsxs("div", { className: "max-w-7xl mx-auto space-y-12 md:space-y-16", children: [
         /* @__PURE__ */ jsxs("header", { className: "text-center space-y-6", children: [
           /* @__PURE__ */ jsxs("div", { className: `flex items-center justify-center ${isMobile ? "gap-2" : "gap-4"}`, children: [
             /* @__PURE__ */ jsx(
@@ -5874,90 +5799,112 @@ const Hub = () => {
               }
             ),
             /* @__PURE__ */ jsx("div", { className: `${isMobile ? "w-2" : "w-0.5"} bg-black ${isMobile ? "h-12" : "h-16"} shadow-[0_0_4px_rgba(255,255,255,0.8)]`, "aria-hidden": "true" }),
-            /* @__PURE__ */ jsx("span", { className: `font-bold text-gray-800 ${isMobile ? "text-xl" : "text-3xl"}`, children: "Hub" })
+            /* @__PURE__ */ jsx("span", { className: `font-bold text-gray-800 ${isMobile ? "text-xl" : "text-3xl"}`, "aria-label": "Hub section", children: "Hub" })
           ] }),
           /* @__PURE__ */ jsxs("div", { className: "space-y-6", children: [
             /* @__PURE__ */ jsx("div", { className: "py-4", children: /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-600 to-purple-700 bg-clip-text text-transparent leading-[1.2] pb-2", children: "Online Mystery Boxes – Find Yours" }) }),
             /* @__PURE__ */ jsx("div", { className: "inline-block mx-auto", children: /* @__PURE__ */ jsx("div", { className: "bg-white/20 backdrop-blur-lg rounded-xl border border-white/30 shadow-lg shadow-purple-500/10 px-4 py-2", children: /* @__PURE__ */ jsx("p", { className: "text-xl text-gray-700 font-semibold leading-relaxed", children: "Unbox the Best Mystery Boxes – Don't Settle for Poor Drop Rates" }) }) }),
-            /* @__PURE__ */ jsx("div", { className: "max-w-3xl mx-auto", children: /* @__PURE__ */ jsx("div", { className: "inline-block bg-white/20 backdrop-blur-lg rounded-xl border border-white/30 shadow-lg shadow-purple-500/10 px-4 py-2", children: /* @__PURE__ */ jsx("p", { className: "text-base text-gray-700 leading-relaxed", children: "Discover profitable mystery boxes with comprehensive analytics. Compare expected values, drop rates, and volatility across multiple providers including HypeDrop, RillaBox, Cases.gg, and LuxDrop." }) }) })
+            /* @__PURE__ */ jsx("div", { className: "max-w-3xl mx-auto", children: /* @__PURE__ */ jsx("div", { className: "inline-block bg-white/20 backdrop-blur-lg rounded-xl border border-white/30 shadow-lg shadow-purple-500/10 px-4 py-2", children: /* @__PURE__ */ jsx("p", { className: "text-base text-gray-700 leading-relaxed", children: "Discover profitable mystery boxes with comprehensive analytics. Compare expected values, drop rates, and volatility across multiple providers including RillaBox, Hypedrop, Cases.GG, and Luxdrop." }) }) })
           ] })
         ] }),
-        /* @__PURE__ */ jsxs("section", { "aria-labelledby": "overview-stats", className: "relative w-fit mx-auto", children: [
-          /* @__PURE__ */ jsx("h2", { id: "overview-stats", className: "sr-only", children: "Platform Overview Statistics" }),
-          /* @__PURE__ */ jsx("div", { className: "bg-gradient-to-br from-purple-50 via-white to-blue-50 backdrop-blur-md rounded-2xl border border-purple-200/50 shadow-2xl shadow-purple-500/20 ring-1 ring-purple-100/50 p-1 animate-pulse-subtle", children: /* @__PURE__ */ jsx("div", { className: "bg-white/40 backdrop-blur-sm rounded-xl", children: /* @__PURE__ */ jsx(CompactStats, { boxesData, loading }) }) }),
-          /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-br from-purple-400/10 to-blue-400/10 rounded-2xl blur-xl -z-10", "aria-hidden": "true" })
+        /* @__PURE__ */ jsxs("section", { "aria-labelledby": "overview-stats", children: [
+          /* @__PURE__ */ jsx("h2", { id: "overview-stats", className: "sr-only", children: "Overview Statistics" }),
+          /* @__PURE__ */ jsxs("div", { className: "relative w-fit mx-auto", children: [
+            /* @__PURE__ */ jsx("div", { className: "bg-gradient-to-br from-purple-50 via-white to-blue-50 backdrop-blur-md rounded-2xl border border-purple-200/50 shadow-2xl shadow-purple-500/20 ring-1 ring-purple-100/50 p-1 animate-pulse-subtle", children: /* @__PURE__ */ jsx("div", { className: "bg-white/40 backdrop-blur-sm rounded-xl", children: /* @__PURE__ */ jsx(CompactStats, { boxesData, loading }) }) }),
+            /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-br from-purple-400/10 to-blue-400/10 rounded-2xl blur-xl -z-10", "aria-hidden": "true" })
+          ] })
         ] }),
         /* @__PURE__ */ jsxs("section", { "aria-labelledby": "item-hunter", children: [
-          /* @__PURE__ */ jsx("h2", { id: "item-hunter", className: "text-3xl font-bold text-gray-800 mb-6 text-center", children: "Item Hunter - Find Mystery Boxes with Your Target Items" }),
-          /* @__PURE__ */ jsx("p", { className: "text-gray-600 text-center mb-8 max-w-2xl mx-auto", children: "Search for specific items and discover which mystery boxes offer the best chances to win them. Compare drop rates across multiple providers to maximize your odds." }),
-          /* @__PURE__ */ jsx(
-            HuntExperience,
-            {
-              searchQuery,
-              searchResults,
-              selectedItem,
-              huntResults,
-              onSearchChange: handleSearch,
-              onItemSelect: handleItemSelect,
-              onClearSearch: handleClearSearch,
-              getItemImage
-            }
-          )
-        ] }),
-        /* @__PURE__ */ jsxs("section", { "aria-labelledby": "analytics-stats", children: [
-          /* @__PURE__ */ jsx("h2", { id: "analytics-stats", className: "text-3xl font-bold text-gray-800 mb-6 text-center", children: "Mystery Box Analytics & Statistics" }),
-          /* @__PURE__ */ jsx("p", { className: "text-gray-600 text-center mb-8 max-w-2xl mx-auto", children: "Real-time analytics across all major mystery box platforms. Track expected values, volatility ratings, and provider performance metrics." }),
-          /* @__PURE__ */ jsx("div", { className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6", children: loading ? (
-            // Show skeleton cards while loading
-            /* @__PURE__ */ jsxs(Fragment, { children: [
-              /* @__PURE__ */ jsx(SkeletonStatsCard, {}),
-              /* @__PURE__ */ jsx(SkeletonStatsCard, {}),
-              /* @__PURE__ */ jsx(SkeletonStatsCard, {}),
-              /* @__PURE__ */ jsx(SkeletonStatsCard, {})
-            ] })
-          ) : (
-            // Show actual data once loaded
-            summaryData && /* @__PURE__ */ jsx(
-              BoxfolioDashboard,
+          /* @__PURE__ */ jsx("h2", { id: "item-hunter", className: "text-2xl font-bold text-gray-800 mb-6 text-center", children: "Item Hunter - Find Mystery Boxes with Your Target Items" }),
+          /* @__PURE__ */ jsxs("div", { className: "space-y-4", children: [
+            /* @__PURE__ */ jsx("p", { className: "text-center text-gray-600 max-w-2xl mx-auto", children: "Search for specific items and discover which mystery boxes contain them. Our Item Hunter tool analyzes drop rates and probabilities to help you find the best boxes for your desired items." }),
+            /* @__PURE__ */ jsx(
+              HuntExperience,
               {
-                summaryData,
-                boxesData,
-                isUnified: true,
-                showOnlyStats: true,
-                selectedProvider: providerParam
+                searchQuery,
+                searchResults,
+                selectedItem,
+                huntResults,
+                onSearchChange: handleSearch,
+                onItemSelect: handleItemSelect,
+                onClearSearch: handleClearSearch,
+                getItemImage
               }
             )
-          ) })
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxs("section", { "aria-labelledby": "analytics-stats", children: [
+          /* @__PURE__ */ jsx("h2", { id: "analytics-stats", className: "text-2xl font-bold text-gray-800 mb-6 text-center", children: "Mystery Box Analytics & Statistics" }),
+          /* @__PURE__ */ jsxs("div", { className: "space-y-4", children: [
+            /* @__PURE__ */ jsx("p", { className: "text-center text-gray-600 max-w-3xl mx-auto", children: "Comprehensive analytics dashboard showing key metrics across all mystery box providers. Track expected values, volatility, and performance indicators to make informed decisions." }),
+            /* @__PURE__ */ jsx("div", { className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6", children: loading ? (
+              // Show skeleton cards while loading
+              /* @__PURE__ */ jsxs(Fragment, { children: [
+                /* @__PURE__ */ jsx(SkeletonStatsCard, {}),
+                /* @__PURE__ */ jsx(SkeletonStatsCard, {}),
+                /* @__PURE__ */ jsx(SkeletonStatsCard, {}),
+                /* @__PURE__ */ jsx(SkeletonStatsCard, {})
+              ] })
+            ) : (
+              // Show actual data once loaded
+              summaryData && /* @__PURE__ */ jsx(BoxfolioDashboard, { summaryData, boxesData, isUnified: true, showOnlyStats: true, selectedProvider: providerParam })
+            ) })
+          ] })
         ] }),
         /* @__PURE__ */ jsxs("section", { "aria-labelledby": "browse-boxes", children: [
-          /* @__PURE__ */ jsx("h2", { id: "browse-boxes", className: "text-3xl font-bold text-gray-800 mb-6 text-center", children: "Browse All Mystery Boxes" }),
-          /* @__PURE__ */ jsx("p", { className: "text-gray-600 text-center mb-8 max-w-2xl mx-auto", children: "Explore our complete database of mystery boxes from top providers. Filter by expected value, volatility, price range, and provider to find the perfect boxes for your strategy." }),
-          loading ? /* @__PURE__ */ jsxs("div", { className: "space-y-6", children: [
-            /* @__PURE__ */ jsx("div", { className: "bg-white/50 backdrop-blur-sm rounded-lg p-4 space-y-4", children: /* @__PURE__ */ jsxs("div", { className: "flex flex-col sm:flex-row gap-4", children: [
-              /* @__PURE__ */ jsx("div", { className: "flex-1", children: /* @__PURE__ */ jsx("div", { className: "h-10 bg-gray-200 rounded animate-pulse" }) }),
-              /* @__PURE__ */ jsx("div", { className: "w-48", children: /* @__PURE__ */ jsx("div", { className: "h-10 bg-gray-200 rounded animate-pulse" }) })
-            ] }) }),
-            /* @__PURE__ */ jsx("div", { className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6", children: Array.from({ length: 12 }).map((_, index) => /* @__PURE__ */ jsx("div", { className: "animate-pulse", children: /* @__PURE__ */ jsxs("article", { className: "bg-white/10 backdrop-blur-sm rounded-xl p-4 space-y-4", children: [
-              /* @__PURE__ */ jsx("div", { className: "h-40 bg-gray-200 rounded-lg" }),
-              /* @__PURE__ */ jsx("div", { className: "h-6 bg-gray-200 rounded w-3/4" }),
-              /* @__PURE__ */ jsxs("div", { className: "flex justify-between", children: [
-                /* @__PURE__ */ jsx("div", { className: "h-6 bg-gray-200 rounded w-16" }),
-                /* @__PURE__ */ jsx("div", { className: "h-6 bg-gray-200 rounded w-12" })
-              ] }),
-              /* @__PURE__ */ jsx("div", { className: "h-8 bg-gray-200 rounded w-20 mx-auto" })
-            ] }) }, index)) })
-          ] }) : summaryData && /* @__PURE__ */ jsx(
-            BoxfolioDashboard,
-            {
-              summaryData,
-              boxesData,
-              isUnified: true,
-              showOnlyContent: true,
-              selectedProvider: providerParam
-            }
-          )
+          /* @__PURE__ */ jsx("h2", { id: "browse-boxes", className: "text-2xl font-bold text-gray-800 mb-6 text-center", children: "Browse All Mystery Boxes" }),
+          /* @__PURE__ */ jsxs("div", { className: "space-y-4", children: [
+            /* @__PURE__ */ jsx("p", { className: "text-center text-gray-600 max-w-3xl mx-auto", children: "Explore our complete collection of mystery boxes from top providers. Use advanced filters to find boxes that match your budget, preferred items, and risk tolerance." }),
+            loading ? /* @__PURE__ */ jsxs("div", { className: "space-y-6", children: [
+              /* @__PURE__ */ jsx("div", { className: "bg-white/50 backdrop-blur-sm rounded-lg p-4 space-y-4", "aria-label": "Loading filters", children: /* @__PURE__ */ jsxs("div", { className: "flex flex-col sm:flex-row gap-4", children: [
+                /* @__PURE__ */ jsx("div", { className: "flex-1", children: /* @__PURE__ */ jsx("div", { className: "h-10 bg-gray-200 rounded animate-pulse" }) }),
+                /* @__PURE__ */ jsx("div", { className: "w-48", children: /* @__PURE__ */ jsx("div", { className: "h-10 bg-gray-200 rounded animate-pulse" }) })
+              ] }) }),
+              /* @__PURE__ */ jsx("div", { className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6", "aria-label": "Loading mystery boxes", children: Array.from({
+                length: 12
+              }).map((_, index) => /* @__PURE__ */ jsx("div", { className: "animate-pulse", children: /* @__PURE__ */ jsxs("div", { className: "bg-white/10 backdrop-blur-sm rounded-xl p-4 space-y-4", children: [
+                /* @__PURE__ */ jsx("div", { className: "h-40 bg-gray-200 rounded-lg" }),
+                /* @__PURE__ */ jsx("div", { className: "h-6 bg-gray-200 rounded w-3/4" }),
+                /* @__PURE__ */ jsxs("div", { className: "flex justify-between", children: [
+                  /* @__PURE__ */ jsx("div", { className: "h-6 bg-gray-200 rounded w-16" }),
+                  /* @__PURE__ */ jsx("div", { className: "h-6 bg-gray-200 rounded w-12" })
+                ] }),
+                /* @__PURE__ */ jsx("div", { className: "h-8 bg-gray-200 rounded w-20 mx-auto" })
+              ] }) }, index)) })
+            ] }) : summaryData && /* @__PURE__ */ jsx(BoxfolioDashboard, { summaryData, boxesData, isUnified: true, showOnlyContent: true, selectedProvider: providerParam })
+          ] })
         ] }),
-        /* @__PURE__ */ jsx(FAQSection, {})
+        /* @__PURE__ */ jsxs("section", { "aria-labelledby": "how-it-works", className: "bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 p-8", children: [
+          /* @__PURE__ */ jsx("h2", { id: "how-it-works", className: "text-2xl font-bold text-gray-800 mb-8 text-center", children: "How Our Mystery Box Analytics Work" }),
+          /* @__PURE__ */ jsxs("div", { className: "grid md:grid-cols-3 gap-8", children: [
+            /* @__PURE__ */ jsxs("article", { className: "text-center space-y-4", children: [
+              /* @__PURE__ */ jsx("h3", { className: "text-lg font-semibold text-gray-800", children: "Data Collection" }),
+              /* @__PURE__ */ jsx("p", { className: "text-gray-600 leading-relaxed", children: "We continuously monitor and analyze mystery box contents, drop rates, and market values across all major providers to ensure accurate and up-to-date information." })
+            ] }),
+            /* @__PURE__ */ jsxs("article", { className: "text-center space-y-4", children: [
+              /* @__PURE__ */ jsx("h3", { className: "text-lg font-semibold text-gray-800", children: "Statistical Analysis" }),
+              /* @__PURE__ */ jsx("p", { className: "text-gray-600 leading-relaxed", children: "Our algorithms calculate expected values, volatility metrics, and probability distributions to give you clear insights into each mystery box's potential returns." })
+            ] }),
+            /* @__PURE__ */ jsxs("article", { className: "text-center space-y-4", children: [
+              /* @__PURE__ */ jsx("h3", { className: "text-lg font-semibold text-gray-800", children: "Smart Recommendations" }),
+              /* @__PURE__ */ jsx("p", { className: "text-gray-600 leading-relaxed", children: "Based on your preferences and historical data, we help you discover the most profitable mystery boxes and avoid those with poor expected values." })
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxs("div", { className: "mt-8 pt-6 border-t border-gray-200/30", children: [
+            /* @__PURE__ */ jsx("h3", { className: "text-lg font-semibold text-gray-800 mb-4 text-center", children: "Supported Providers" }),
+            /* @__PURE__ */ jsxs("p", { className: "text-center text-gray-600 max-w-4xl mx-auto", children: [
+              "Our platform analyzes mystery boxes from ",
+              /* @__PURE__ */ jsx("strong", { children: "RillaBox" }),
+              ", ",
+              /* @__PURE__ */ jsx("strong", { children: "Hypedrop" }),
+              ", ",
+              /* @__PURE__ */ jsx("strong", { children: "Cases.GG" }),
+              ", and ",
+              /* @__PURE__ */ jsx("strong", { children: "Luxdrop" }),
+              " - the most popular and trusted mystery box providers in the market. Each provider offers unique boxes with different themes, price ranges, and item collections."
+            ] })
+          ] })
+        ] })
       ] }) })
     ] })
   ] });
