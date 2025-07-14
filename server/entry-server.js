@@ -5757,7 +5757,7 @@ const Hub = () => {
       /* @__PURE__ */ jsx("div", { className: "p-6 md:p-8", children: /* @__PURE__ */ jsxs("div", { className: "max-w-7xl mx-auto space-y-12 md:space-y-16", children: [
         /* @__PURE__ */ jsxs("header", { className: "text-center space-y-6", children: [
           /* @__PURE__ */ jsxs("div", { className: `flex items-center justify-center ${isMobile ? "gap-3" : "gap-6"}`, children: [
-            /* @__PURE__ */ jsx("img", { src: "/images/208a85a9-4108-4646-8cb0-aed2a05655ab.png", alt: "Unpacked.gg Logo", className: `object-contain ${isMobile ? "h-32" : "h-48"}` }),
+            /* @__PURE__ */ jsx("img", { src: "/images/208a85a9-4108-4646-8cb0-aed2a05655ab.png", alt: "Unpacked.gg Logo", className: `object-contain ${isMobile ? "h-20" : "h-32"}` }),
             /* @__PURE__ */ jsx("div", { className: `${isMobile ? "w-3" : "w-1"} bg-black ${isMobile ? "h-20" : "h-32"} shadow-[0_0_4px_rgba(255,255,255,0.8)]` }),
             /* @__PURE__ */ jsx("span", { className: `font-bold text-gray-800 ${isMobile ? "text-3xl" : "text-5xl"}`, children: "Hub" })
           ] }),

@@ -8,16 +8,19 @@ RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule . - [L]
 
+# Serve existing directories directly
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule . - [L]
+
 # Handle /hub/ root - serve hub.html
 RewriteRule ^$ hub.html [L]
 
 # For box pages, try pre-rendered HTML first
+RewriteCond %{REQUEST_FILENAME}.html -f
 RewriteRule ^box/([^/]+)/?$ box/$1.html [L]
 
 # Fallback to hub.html for React Router (SPA routing)
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . hub.html [L]
+RewriteRule ^.*$ hub.html [L]
 
 # Security headers
 <FilesMatch "\.(js|css|png|jpg|jpeg|gif|svg|webp|ico|woff|woff2|ttf|eot)$">
@@ -29,7 +32,7 @@ RewriteRule . hub.html [L]
 </FilesMatch>
 
 # Prevent direct access to sensitive files
-<Files "*.json">
-    Order Allow,Deny
+<FilesMatch "\.(env|log|htaccess)$">
+    Order allow,deny
     Deny from all
-</Files> 
+</FilesMatch> 
