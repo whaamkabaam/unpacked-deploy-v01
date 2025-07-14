@@ -1,0 +1,35 @@
+# Hub Subdirectory Apache Configuration
+# Handles React Router routing and pre-rendered static files
+
+# Enable Rewrite Engine
+RewriteEngine On
+
+# Serve existing files directly (assets, pre-rendered HTML, etc.)
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule . - [L]
+
+# Handle /hub/ root - serve hub.html
+RewriteRule ^$ hub.html [L]
+
+# For box pages, try pre-rendered HTML first
+RewriteRule ^box/([^/]+)/?$ box/$1.html [L]
+
+# Fallback to hub.html for React Router (SPA routing)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . hub.html [L]
+
+# Security headers
+<FilesMatch "\.(js|css|png|jpg|jpeg|gif|svg|webp|ico|woff|woff2|ttf|eot)$">
+    Header set Cache-Control "public, max-age=31536000"
+</FilesMatch>
+
+<FilesMatch "\.html$">
+    Header set Cache-Control "public, max-age=3600"
+</FilesMatch>
+
+# Prevent direct access to sensitive files
+<Files "*.json">
+    Order Allow,Deny
+    Deny from all
+</Files> 
