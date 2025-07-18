@@ -1691,12 +1691,23 @@ const ProviderLogo = ({
     transparent: enhanced ? "bg-gray-50/90 backdrop-blur-sm shadow-md border border-gray-200/70" : "bg-gray-50/60 border border-gray-200/40",
     dark: enhanced ? "bg-gray-900 shadow-md border border-gray-700" : "bg-gray-800 border border-gray-600"
   };
-  const handleImageError = () => {
-    console.warn(`Failed to load logo for ${config.displayName}: ${config.logo}`);
+  const handleImageError = (e) => {
+    console.error(`Failed to load logo for ${config.displayName}:`, {
+      src: config.logo,
+      providerId,
+      error: e.currentTarget.src,
+      naturalWidth: e.currentTarget.naturalWidth,
+      naturalHeight: e.currentTarget.naturalHeight
+    });
     setImageError(true);
   };
-  const handleImageLoad = () => {
-    console.log(`Successfully loaded logo for ${config.displayName}`);
+  const handleImageLoad = (e) => {
+    console.log(`Successfully loaded logo for ${config.displayName}:`, {
+      src: config.logo,
+      providerId,
+      naturalWidth: e.currentTarget.naturalWidth,
+      naturalHeight: e.currentTarget.naturalHeight
+    });
     setImageLoaded(true);
   };
   const shouldShowFallback = imageError || !imageLoaded && showFallback;
@@ -1740,7 +1751,7 @@ const ProviderLogo = ({
             style: {
               fontSize: size === "xs" ? "6px" : size === "sm" ? "8px" : size === "md" ? "12px" : size === "lg" ? "16px" : size === "xl" ? "20px" : "24px"
             },
-            children: config.displayName.charAt(0)
+            children: imageError ? config.displayName.substring(0, 2).toUpperCase() : config.displayName.charAt(0)
           }
         )
       ]
@@ -1970,23 +1981,15 @@ const BoxCard = React__default.memo(({ box, index, isVisible }) => {
               /* @__PURE__ */ jsxs(
                 "div",
                 {
-                  className: "w-full h-40 rounded-lg mb-2 overflow-hidden p-2 border border-purple-200 backdrop-blur-sm relative",
-                  style: {
-                    backgroundImage: `url('/images/90a8beae-8a8c-4f9a-bfd2-d7dc5be9de82.png')`,
-                    backgroundSize: "cover",
-                    backgroundRepeat: "no-repeat",
-                    backgroundPosition: "center",
-                    backgroundBlendMode: "soft-light"
-                  },
+                  className: "w-full h-40 rounded-lg mb-2 overflow-hidden p-2 border border-purple-200 backdrop-blur-sm relative bg-white/70 box-container-pattern",
                   children: [
-                    /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-white/70 backdrop-blur-[0.5px] rounded" }),
-                    !imageLoaded && /* @__PURE__ */ jsx("div", { className: "w-full h-full bg-gray-200 animate-pulse rounded relative z-10" }),
+                    !imageLoaded && /* @__PURE__ */ jsx("div", { className: "w-full h-full bg-gray-200 animate-pulse rounded relative z-20" }),
                     /* @__PURE__ */ jsx(
                       "img",
                       {
                         src: box.box_image,
                         alt: box.box_name,
-                        className: `w-full h-full object-contain transition-opacity duration-300 relative z-10 ${imageLoaded ? "opacity-100" : "opacity-0"}`,
+                        className: `w-full h-full object-contain transition-opacity duration-300 relative z-20 ${imageLoaded ? "opacity-100" : "opacity-0"}`,
                         loading: index < 12 ? "eager" : "lazy",
                         referrerPolicy: "no-referrer",
                         onLoad: () => setImageLoaded(true)
@@ -1995,9 +1998,9 @@ const BoxCard = React__default.memo(({ box, index, isVisible }) => {
                   ]
                 }
               ),
-              /* @__PURE__ */ jsx(CardTitle, { className: "text-lg font-bold truncate text-gray-800 pr-16", children: box.box_name })
+              /* @__PURE__ */ jsx(CardTitle, { className: "text-lg font-bold truncate text-gray-800 pr-16 relative z-10", children: box.box_name })
             ] }),
-            /* @__PURE__ */ jsxs(CardContent, { className: "space-y-3", children: [
+            /* @__PURE__ */ jsxs(CardContent, { className: "space-y-3 relative z-10", children: [
               /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-3 gap-2 items-center", children: [
                 /* @__PURE__ */ jsx("div", { className: "text-left", children: /* @__PURE__ */ jsx("span", { className: "text-xl font-bold text-gray-800", children: formatBoxPrice(box.box_price) }) }),
                 /* @__PURE__ */ jsx("div", { className: "flex justify-center", children: /* @__PURE__ */ jsx("span", { className: `text-xs px-2 py-1 rounded-full font-medium text-center ${(_b2 = PROVIDER_CONFIGS[provider]) == null ? void 0 : _b2.bgColor} ${(_c = PROVIDER_CONFIGS[provider]) == null ? void 0 : _c.textColor}`, children: (_d = PROVIDER_CONFIGS[provider]) == null ? void 0 : _d.displayName }) }),
@@ -4634,7 +4637,7 @@ const BoxfolioDashboard = ({
           /* @__PURE__ */ jsx("div", { className: "flex items-center justify-center", children: /* @__PURE__ */ jsx(
             "img",
             {
-              src: "/images/208a85a9-4108-4646-8cb0-aed2a05655ab.png",
+              src: "/hub/images/208a85a9-4108-4646-8cb0-aed2a05655ab.png",
               alt: "Unpacked.gg Logo",
               className: "h-32 object-contain"
             }
@@ -5756,10 +5759,21 @@ const Hub = () => {
       ] }) }),
       /* @__PURE__ */ jsx("div", { className: "p-6 md:p-8", children: /* @__PURE__ */ jsxs("div", { className: "max-w-7xl mx-auto space-y-12 md:space-y-16", children: [
         /* @__PURE__ */ jsxs("header", { className: "text-center space-y-6", children: [
-          /* @__PURE__ */ jsxs("div", { className: `flex items-center justify-center ${isMobile ? "gap-3" : "gap-6"}`, children: [
-            /* @__PURE__ */ jsx("img", { src: "/images/208a85a9-4108-4646-8cb0-aed2a05655ab.png", alt: "Unpacked.gg Logo", className: `object-contain ${isMobile ? "h-32" : "h-48"}` }),
-            /* @__PURE__ */ jsx("div", { className: `${isMobile ? "w-3" : "w-1"} bg-black ${isMobile ? "h-20" : "h-32"} shadow-[0_0_4px_rgba(255,255,255,0.8)]` }),
-            /* @__PURE__ */ jsx("span", { className: `font-bold text-gray-800 ${isMobile ? "text-3xl" : "text-5xl"}`, children: "Hub" })
+          /* @__PURE__ */ jsxs("div", { className: `flex items-center justify-center ${isMobile ? "gap-2" : "gap-4 lg:gap-6"}`, children: [
+            /* @__PURE__ */ jsx(
+              "img",
+              {
+                src: "/images/208a85a9-4108-4646-8cb0-aed2a05655ab.png",
+                alt: "Unpacked.gg Logo",
+                className: `object-contain ${isMobile ? "h-16" : "h-24 md:h-32 lg:h-48"} flex-shrink-0`,
+                onError: (e) => {
+                  console.warn("Main logo failed to load:", e.currentTarget.src);
+                  e.currentTarget.style.display = "none";
+                }
+              }
+            ),
+            /* @__PURE__ */ jsx("div", { className: `${isMobile ? "w-0.5" : "w-1"} bg-black ${isMobile ? "h-12" : "h-16 md:h-20 lg:h-32"} shadow-[0_0_4px_rgba(255,255,255,0.8)] flex-shrink-0` }),
+            /* @__PURE__ */ jsx("span", { className: `font-bold text-gray-800 ${isMobile ? "text-xl" : "text-2xl md:text-3xl lg:text-5xl"} flex-shrink-0 min-w-0`, children: "Hub" })
           ] }),
           /* @__PURE__ */ jsxs("div", { className: "space-y-6", children: [
             /* @__PURE__ */ jsx("div", { className: "py-4", children: /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-600 to-purple-700 bg-clip-text text-transparent leading-[1.2] pb-2", children: "Online Mystery Boxes – Find Yours" }) }),
@@ -5768,7 +5782,7 @@ const Hub = () => {
           ] })
         ] }),
         /* @__PURE__ */ jsxs("div", { className: "relative w-fit mx-auto", children: [
-          /* @__PURE__ */ jsx("div", { className: "bg-gradient-to-br from-purple-50 via-white to-blue-50 backdrop-blur-md rounded-2xl border border-purple-200/50 shadow-2xl shadow-purple-500/20 ring-1 ring-purple-100/50 p-1 animate-pulse-subtle", children: /* @__PURE__ */ jsx("div", { className: "bg-white/40 backdrop-blur-sm rounded-xl", children: /* @__PURE__ */ jsx(CompactStats, { boxesData, loading }) }) }),
+          /* @__PURE__ */ jsx("div", { className: "backdrop-blur-md rounded-2xl border border-purple-200/50 shadow-2xl shadow-purple-500/20 ring-1 ring-purple-100/50 p-1 animate-pulse-subtle box-stats-pattern-blurred", children: /* @__PURE__ */ jsx("div", { className: "bg-white/60 backdrop-blur-sm rounded-xl relative z-10", children: /* @__PURE__ */ jsx(CompactStats, { boxesData, loading }) }) }),
           /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-br from-purple-400/10 to-blue-400/10 rounded-2xl blur-xl -z-10" })
         ] }),
         /* @__PURE__ */ jsxs("section", { children: [
@@ -6341,36 +6355,32 @@ const BoxDetailContent = ({ box }) => {
         /* @__PURE__ */ jsxs(
           "div",
           {
-            className: `w-full ${isMobile ? "h-48" : "h-64"} rounded-xl overflow-hidden p-4 shadow-lg border border-purple-200 relative cursor-pointer`,
-            style: {
-              backgroundImage: `url('/images/90a8beae-8a8c-4f9a-bfd2-d7dc5be9de82.png')`,
-              backgroundSize: "cover",
-              backgroundRepeat: "no-referrer",
-              backgroundPosition: "center",
-              backgroundBlendMode: "soft-light"
-            },
+            className: `w-full ${isMobile ? "h-48" : "h-64"} rounded-xl overflow-hidden p-4 shadow-lg border border-purple-200 relative cursor-pointer box-container-pattern`,
             children: [
-              /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-white/70 backdrop-blur-[0.5px] rounded-xl" }),
-              !imageLoaded && /* @__PURE__ */ jsx("div", { className: "w-full h-full bg-gray-200 animate-pulse rounded relative z-10" }),
+              /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-white/70 backdrop-blur-[0.5px] rounded-xl z-10" }),
+              !imageLoaded && /* @__PURE__ */ jsx("div", { className: "w-full h-full bg-gray-200 animate-pulse rounded relative z-20" }),
               /* @__PURE__ */ jsx(
                 "img",
                 {
                   src: box.box_image,
                   alt: box.box_name,
-                  className: `w-full h-full object-contain relative z-10 transition-transform duration-300 hover:scale-[1.02] transform-origin-center overflow-visible cursor-default ${imageLoaded ? "opacity-100" : "opacity-0"}`,
+                  className: `w-full h-full object-contain relative z-20 transition-transform duration-300 hover:scale-[1.02] transform-origin-center overflow-visible cursor-default ${imageLoaded ? "opacity-100" : "opacity-0"}`,
                   referrerPolicy: "no-referrer",
-                  onLoad: () => setImageLoaded(true)
+                  onLoad: () => setImageLoaded(true),
+                  onError: (e) => {
+                    console.warn("Box image failed to load:", e.currentTarget.src);
+                  }
                 }
               )
             ]
           }
         ),
         /* @__PURE__ */ jsxs("div", { className: `grid ${isMobile ? "grid-cols-2" : "grid-cols-3"} gap-4`, children: [
-          /* @__PURE__ */ jsxs("div", { className: `text-center ${isMobile ? "p-3" : "p-4"} bg-purple-50 backdrop-blur-sm rounded-xl shadow-lg border border-purple-200`, children: [
+          /* @__PURE__ */ jsxs("div", { className: `text-center ${isMobile ? "p-3" : "p-4"} rounded-xl shadow-lg border border-purple-200 bg-white`, children: [
             /* @__PURE__ */ jsx("div", { className: `${isMobile ? "text-lg" : "text-xl"} font-bold text-gray-800`, children: formatBoxPrice(box.box_price) }),
             /* @__PURE__ */ jsx("div", { className: `${isMobile ? "text-xs" : "text-sm"} text-gray-600 font-medium`, children: "Mystery Box Price" })
           ] }),
-          /* @__PURE__ */ jsxs("div", { className: `text-center ${isMobile ? "p-3" : "p-4"} bg-purple-50 backdrop-blur-sm rounded-xl shadow-lg border border-purple-200`, children: [
+          /* @__PURE__ */ jsxs("div", { className: `text-center ${isMobile ? "p-3" : "p-4"} rounded-xl shadow-lg border border-purple-200 bg-white`, children: [
             /* @__PURE__ */ jsxs("div", { className: `${isMobile ? "text-lg" : "text-xl"} ${getEVGradient(box.expected_value_percent_of_price)}`, children: [
               box.expected_value_percent_of_price.toFixed(1),
               "% (EV)"
@@ -6383,7 +6393,7 @@ const BoxDetailContent = ({ box }) => {
               ] })
             ] })
           ] }),
-          !isMobile && /* @__PURE__ */ jsxs("div", { className: "text-center p-4 bg-purple-50 backdrop-blur-sm rounded-xl shadow-lg border border-purple-200", children: [
+          !isMobile && /* @__PURE__ */ jsxs("div", { className: "text-center p-4 rounded-xl shadow-lg border border-purple-200 bg-white", children: [
             /* @__PURE__ */ jsxs("div", { className: `text-xl ${getVolatilityGradient(volatilityPercent)}`, children: [
               volatilityPercent.toFixed(1),
               "%"
@@ -6397,7 +6407,7 @@ const BoxDetailContent = ({ box }) => {
             ] })
           ] })
         ] }),
-        isMobile && /* @__PURE__ */ jsxs("div", { className: "text-center p-3 bg-purple-50 backdrop-blur-sm rounded-xl shadow-lg border border-purple-200", children: [
+        isMobile && /* @__PURE__ */ jsxs("div", { className: "text-center p-3 rounded-xl shadow-lg border border-purple-200 bg-white", children: [
           /* @__PURE__ */ jsxs("div", { className: `text-lg ${getVolatilityGradient(volatilityPercent)}`, children: [
             volatilityPercent.toFixed(1),
             "% Volatility"
@@ -6405,7 +6415,7 @@ const BoxDetailContent = ({ box }) => {
           /* @__PURE__ */ jsx("div", { className: "text-xs text-gray-600 font-medium", children: "Measure of risk and unpredictability" })
         ] }),
         /* @__PURE__ */ jsxs("div", { className: isMobile ? "space-y-4" : "flex gap-4", children: [
-          /* @__PURE__ */ jsxs("div", { className: `${isMobile ? "w-full" : "flex-[2]"} ${isMobile ? "p-3" : "p-4"} bg-purple-50 backdrop-blur-sm rounded-xl shadow-lg border border-purple-200 flex flex-col`, children: [
+          /* @__PURE__ */ jsxs("div", { className: `${isMobile ? "w-full" : "flex-[2]"} ${isMobile ? "p-3" : "p-4"} rounded-xl shadow-lg border border-purple-200 flex flex-col bg-white`, children: [
             /* @__PURE__ */ jsx("h4", { className: `${isMobile ? "text-sm" : "text-sm"} font-medium text-gray-700 mb-3`, children: "All Tags" }),
             /* @__PURE__ */ jsx(
               ScrollableContainer,
@@ -6426,7 +6436,7 @@ const BoxDetailContent = ({ box }) => {
             )
           ] }),
           /* @__PURE__ */ jsxs("div", { className: `${isMobile ? "grid grid-cols-2 gap-4" : "flex flex-col gap-4 flex-1"}`, children: [
-            /* @__PURE__ */ jsxs("div", { className: `text-center ${isMobile ? "p-3" : "p-4"} bg-purple-50 backdrop-blur-sm rounded-xl shadow-lg border border-purple-200`, children: [
+            /* @__PURE__ */ jsxs("div", { className: `text-center ${isMobile ? "p-3" : "p-4"} rounded-xl shadow-lg border border-purple-200 bg-white`, children: [
               /* @__PURE__ */ jsxs("div", { className: `${isMobile ? "text-base" : "text-lg"} ${getFloorRateColor(floorPercent)}`, children: [
                 floorPercent.toFixed(1),
                 "%"
@@ -6439,7 +6449,7 @@ const BoxDetailContent = ({ box }) => {
                 ] })
               ] })
             ] }),
-            /* @__PURE__ */ jsxs("div", { className: `text-center ${isMobile ? "p-3" : "p-4"} bg-purple-50 backdrop-blur-sm rounded-xl shadow-lg border border-purple-200`, children: [
+            /* @__PURE__ */ jsxs("div", { className: `text-center ${isMobile ? "p-3" : "p-4"} rounded-xl shadow-lg border border-purple-200 bg-white`, children: [
               /* @__PURE__ */ jsxs("div", { className: `${isMobile ? "text-base" : "text-lg"} font-bold text-red-600`, children: [
                 lossChance.toFixed(1),
                 "%"
@@ -6460,12 +6470,12 @@ const BoxDetailContent = ({ box }) => {
             ScrollableContainer,
             {
               maxHeight: isMobile ? "max-h-60" : "max-h-80",
-              className: "space-y-2",
+              className: "space-y-2 bg-white/40 rounded-xl p-2",
               children: /* @__PURE__ */ jsxs("div", { className: "px-2 pt-3", children: [
                 sortedAllItems.slice(0, 50).map((item, i) => /* @__PURE__ */ jsxs(
                   "div",
                   {
-                    className: `flex items-center gap-2 p-2 bg-purple-50 rounded border border-purple-200 mb-2
+                    className: `flex items-center gap-2 p-2 bg-white/80 rounded border border-purple-200 mb-2
                                     ${isMobile ? "text-xs min-h-[44px] hover:scale-[1.02]" : "text-sm hover:scale-[1.03]"}
                                     transition-transform origin-center relative z-10 overflow-visible cursor-pointer`,
                     children: [
@@ -6508,12 +6518,12 @@ const BoxDetailContent = ({ box }) => {
             ScrollableContainer,
             {
               maxHeight: topJackpotItems.length <= 3 ? "max-h-none" : isMobile ? "max-h-48" : "max-h-60",
-              className: "space-y-2",
+              className: "space-y-2 bg-white/40 rounded-xl p-2",
               showIndicators: topJackpotItems.length > 3,
               children: /* @__PURE__ */ jsx("div", { className: "px-2 pt-3", children: topJackpotItems && topJackpotItems.length > 0 ? topJackpotItems.map((item, i) => /* @__PURE__ */ jsxs(
                 "div",
                 {
-                  className: `flex items-center gap-2 p-2 bg-purple-50 rounded border border-purple-200 mb-2
+                  className: `flex items-center gap-2 p-2 bg-purple-50/80 rounded border border-purple-200 mb-2
                                     ${isMobile ? "min-h-[44px] hover:scale-[1.02]" : "hover:scale-[1.03]"}
                                     transition-transform origin-center relative z-10 overflow-visible cursor-pointer`,
                   children: [
@@ -6524,7 +6534,10 @@ const BoxDetailContent = ({ box }) => {
                         alt: item.name,
                         className: "w-full h-full object-contain rounded",
                         loading: "lazy",
-                        referrerPolicy: "no-referrer"
+                        referrerPolicy: "no-referrer",
+                        onError: (e) => {
+                          console.warn("Jackpot item image failed to load:", e.currentTarget.src);
+                        }
                       }
                     ) : /* @__PURE__ */ jsx(Star, { className: `${isMobile ? "w-3 h-3" : "w-4 h-4"} text-purple-500` }) }),
                     /* @__PURE__ */ jsxs("div", { className: "flex-1 min-w-0", children: [
@@ -6563,12 +6576,12 @@ const BoxDetailContent = ({ box }) => {
             ScrollableContainer,
             {
               maxHeight: topCommonItems.length <= 3 ? "max-h-none" : isMobile ? "max-h-48" : "max-h-60",
-              className: "space-y-2",
+              className: "space-y-2 bg-white/40 rounded-xl p-2",
               showIndicators: topCommonItems.length > 3,
               children: /* @__PURE__ */ jsx("div", { className: "px-2 pt-3", children: topCommonItems && topCommonItems.length > 0 ? topCommonItems.map((item, i) => /* @__PURE__ */ jsxs(
                 "div",
                 {
-                  className: `flex items-center gap-2 p-2 bg-red-50 rounded border border-red-200 mb-2
+                  className: `flex items-center gap-2 p-2 bg-red-50/80 rounded border border-red-200 mb-2
                                     ${isMobile ? "min-h-[44px] hover:scale-[1.02]" : "hover:scale-[1.03]"}
                                     transition-transform origin-center relative z-10 overflow-visible cursor-pointer`,
                   children: [
@@ -6579,7 +6592,10 @@ const BoxDetailContent = ({ box }) => {
                         alt: item.name,
                         className: "w-full h-full object-contain rounded",
                         loading: "lazy",
-                        referrerPolicy: "no-referrer"
+                        referrerPolicy: "no-referrer",
+                        onError: (e) => {
+                          console.warn("Common item image failed to load:", e.currentTarget.src);
+                        }
                       }
                     ) : /* @__PURE__ */ jsx(AlertTriangle, { className: `${isMobile ? "w-3 h-3" : "w-4 h-4"} text-red-500` }) }),
                     /* @__PURE__ */ jsxs("div", { className: "flex-1 min-w-0", children: [
