@@ -1593,6 +1593,11 @@ const TagDots = ({
     ] })
   ] }) });
 };
+const __vite_import_meta_env__ = { "BASE_URL": "/hub/", "DEV": false, "MODE": "production", "PROD": true, "SSR": true, "VITE_APP_BASENAME": "/hub" };
+const getLogoPath = (filename) => {
+  const baseUrl = typeof window !== "undefined" && __vite_import_meta_env__ ? "/hub/" : "/";
+  return `${baseUrl}images/${filename}`;
+};
 const SORT_OPTIONS = [
   { value: "ev_desc", label: "Expected Value (High to Low)" },
   { value: "ev_asc", label: "Expected Value (Low to High)" },
@@ -1615,7 +1620,7 @@ const PROVIDER_CONFIGS = {
     bgColor: "bg-purple-50",
     borderColor: "border-purple-200",
     textColor: "text-purple-700",
-    logo: "/images/998b5116-3761-4842-9a89-628f8e71c362.png",
+    logo: getLogoPath("998b5116-3761-4842-9a89-628f8e71c362.png"),
     logoAspectRatio: "square",
     logoBackground: "white"
   },
@@ -1628,7 +1633,7 @@ const PROVIDER_CONFIGS = {
     bgColor: "bg-blue-50",
     borderColor: "border-blue-200",
     textColor: "text-blue-700",
-    logo: "/images/df4efff1-2943-40f6-9a23-fc3f872ee338.png",
+    logo: getLogoPath("df4efff1-2943-40f6-9a23-fc3f872ee338.png"),
     logoAspectRatio: "wide",
     logoBackground: "transparent"
   },
@@ -1641,7 +1646,7 @@ const PROVIDER_CONFIGS = {
     bgColor: "bg-green-50",
     borderColor: "border-green-200",
     textColor: "text-green-700",
-    logo: "/images/ccc8c7f7-53cc-41ac-8e6d-0fe13f968fd3.png",
+    logo: getLogoPath("ccc8c7f7-53cc-41ac-8e6d-0fe13f968fd3.png"),
     logoAspectRatio: "wide",
     logoBackground: "dark"
   },
@@ -1654,7 +1659,7 @@ const PROVIDER_CONFIGS = {
     bgColor: "bg-amber-50",
     borderColor: "border-amber-200",
     textColor: "text-amber-700",
-    logo: "/images/f983540a-2e1c-47e7-bac5-99c00df75346.png",
+    logo: getLogoPath("f983540a-2e1c-47e7-bac5-99c00df75346.png"),
     logoAspectRatio: "square",
     logoBackground: "transparent"
   }
@@ -5763,7 +5768,7 @@ const Hub = () => {
             /* @__PURE__ */ jsx(
               "img",
               {
-                src: "/images/208a85a9-4108-4646-8cb0-aed2a05655ab.png",
+                src: `${"/hub/"}images/208a85a9-4108-4646-8cb0-aed2a05655ab.png`,
                 alt: "Unpacked.gg Logo",
                 className: `object-contain ${isMobile ? "h-16" : "h-24 md:h-32 lg:h-48"} flex-shrink-0`,
                 onError: (e) => {
