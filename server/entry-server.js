@@ -951,6 +951,19 @@ function useToast() {
 function cn(...inputs) {
   return twMerge(clsx(inputs));
 }
+function fixImagePath(imagePath) {
+  if (!imagePath) return imagePath;
+  if (imagePath.startsWith("http") || imagePath.startsWith("/hub/")) {
+    return imagePath;
+  }
+  if (imagePath.startsWith("images/")) {
+    return `/hub/${imagePath}`;
+  }
+  if (!imagePath.startsWith("/")) {
+    return `/hub/images/${imagePath}`;
+  }
+  return `/hub${imagePath}`;
+}
 const ToastProvider = ToastPrimitives.Provider;
 const ToastViewport = React.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   ToastPrimitives.Viewport,
@@ -1142,7 +1155,7 @@ const safeParseJSON$1 = (jsonData) => {
         name: item.item_name || item.name || "Unknown Item",
         value: parseFloat(item.item_value || item.value || item.price || 0),
         drop_chance: dropChance,
-        image: item.item_image || item.image || "",
+        image: fixImagePath(item.item_image || item.image || ""),
         type: item.type || item.item_type || ""
       };
     });
@@ -1264,7 +1277,7 @@ const fetchUnifiedData = async (selectedProviders, limit = 1e3) => {
           return {
             box_name: box.box_name || "Unknown Mystery Box",
             box_price: Number(box.box_price) || 0,
-            box_image: box.box_image || "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=300&fit=crop",
+            box_image: fixImagePath(box.box_image || "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=300&fit=crop"),
             expected_value_percent_of_price: Number(box.expected_value_percent) || 0,
             volatility_bucket: box.volatility_bucket || "Medium",
             standard_deviation_percent: Number(box.standard_deviation_percent) || 0,
@@ -5857,19 +5870,16 @@ const safeParseJSON = (jsonData) => {
       } else if (item.price !== void 0) {
         value = parseFloat(item.price);
       }
-      if (isNaN(value) || value < 0) {
-        console.warn(`Invalid value for item "${item.item_name || item.name}": ${value}, setting to 0`);
-        value = 0;
-      }
-      const parsedItem = {
+      const image = fixImagePath(item.item_image || item.image || item.image_url || item.imageUrl || item.img || "");
+      const type = item.type || item.item_type || item.itemType || "";
+      console.log(`Processed box detail item: ${item.item_name || item.name}, value: ${value}, drop_chance: ${dropChance}, image: ${image}`);
+      return {
         name: item.item_name || item.name || "Unknown Item",
         value,
         drop_chance: dropChance,
-        image: item.item_image || item.image || "",
-        type: item.type || item.item_type || ""
+        image,
+        type
       };
-      console.log(`Parsed item: ${parsedItem.name}, Value: $${parsedItem.value}, Drop: ${(parsedItem.drop_chance * 100).toFixed(4)}%`);
-      return parsedItem;
     });
   }
   if (typeof jsonData === "string") {
@@ -5958,7 +5968,7 @@ const fetchBoxDetail = async (boxSlug) => {
   return {
     box_name: foundBox.box_name || "Unknown Mystery Box",
     box_price: Number(foundBox.box_price) || 0,
-    box_image: foundBox.box_image || "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=300&fit=crop",
+    box_image: fixImagePath(foundBox.box_image || "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=300&fit=crop"),
     expected_value_percent_of_price: Number(foundBox.expected_value_percent) || 0,
     volatility_bucket: foundBox.volatility_bucket || "Medium",
     standard_deviation_percent: Number(foundBox.standard_deviation_percent) || 0,
