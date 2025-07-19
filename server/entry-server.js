@@ -953,22 +953,16 @@ function cn(...inputs) {
 }
 function fixImagePath(imagePath) {
   if (!imagePath) return imagePath;
-  if (imagePath.startsWith("http")) {
+  if (imagePath.startsWith("http") || imagePath.startsWith("/hub/")) {
     return imagePath;
-  }
-  if (imagePath.startsWith("/hub/")) {
-    return imagePath.replace("/hub/", "");
   }
   if (imagePath.startsWith("images/")) {
-    return imagePath;
+    return `/hub/${imagePath}`;
   }
-  if (imagePath.startsWith("/")) {
-    return imagePath.substring(1);
+  if (!imagePath.startsWith("/")) {
+    return `/hub/images/${imagePath}`;
   }
-  if (!imagePath.includes("/")) {
-    return `images/${imagePath}`;
-  }
-  return imagePath;
+  return `/hub${imagePath}`;
 }
 const ToastProvider = ToastPrimitives.Provider;
 const ToastViewport = React.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
